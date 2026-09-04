@@ -1,340 +1,374 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SnackFast | Lightning Fast Snack Delivery</title>
-    <style>
-        :root {
-            --primary: #ff4757;
-            --accent: #ffa502;
-            --dark: #2f3542;
-            --light: #f1f2f6;
-            --white: #ffffff;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SnackFast | Lightning Fast Snack Delivery</title>
+  <style>
+    :root {
+      --primary: #ff4757;
+      --accent: #ffa502;
+      --dark: #2f3542;
+      --light: #f1f2f6;
+      --white: #ffffff;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        body {
-            background-color: var(--light);
-            color: var(--dark);
-        }
+    body {
+      background-color: var(--light);
+      color: var(--dark);
+    }
 
-        /* Header & Nav */
-        header {
-            background-color: var(--white);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+    header {
+      background-color: var(--white);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-        }
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+    }
 
-        .logo {
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: var(--primary);
-            text-decoration: none;
-        }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-decoration: none;
+    }
 
-        .logo span {
-            color: var(--accent);
-        }
+    .logo span {
+      color: var(--accent);
+    }
 
-        .cart-btn {
-            background-color: var(--primary);
-            color: var(--white);
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .cart-btn {
+      background-color: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-        .cart-badge {
-            background-color: var(--accent);
-            color: var(--dark);
-            border-radius: 50%;
-            padding: 2px 7px;
-            font-size: 0.8rem;
-        }
+    .cart-badge {
+      background-color: var(--accent);
+      color: var(--dark);
+      border-radius: 50%;
+      padding: 2px 7px;
+      font-size: 0.8rem;
+    }
 
-        /* Main Content */
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
+    .container {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
 
-        .hero {
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            color: var(--white);
-            padding: 3rem 2rem;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+    .hero {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: var(--white);
+      padding: 3rem 2rem;
+      border-radius: 12px;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
 
-        .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .hero p { font-size: 1.1rem; opacity: 0.9; }
+    .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    .hero p { font-size: 1.1rem; opacity: 0.9; }
 
-        /* Filter Controls */
-        .categories {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            overflow-x: auto;
-        }
+    .categories {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
 
-        .filter-btn {
-            background: var(--white);
-            border: 1px solid #ddd;
-            padding: 0.5rem 1.5rem;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-        }
+    .filter-btn {
+      background: var(--white);
+      border: 1px solid #ddd;
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+    }
 
-        .filter-btn.active {
-            background: var(--dark);
-            color: var(--white);
-            border-color: var(--dark);
-        }
+    .filter-btn.active {
+      background: var(--dark);
+      color: var(--white);
+      border-color: var(--dark);
+    }
 
-        /* Product Grid */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1.5rem;
-        }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+    }
 
-        .card {
-            background: var(--white);
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-        }
+    .card {
+      background: var(--white);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+    }
 
-        .card-img {
-            height: 160px;
-            background: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 4rem;
-        }
+    .card-img {
+      height: 160px;
+      background: #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
 
-        .card-body {
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            flex-grow: 1;
-        }
+    .card-body {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
 
-        .card-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .card-price { font-weight: bold; color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; }
+    .card-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .card-price { font-weight: bold; color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; }
 
-        .add-btn {
-            margin-top: auto;
-            background: var(--light);
-            border: 1px solid var(--dark);
-            color: var(--dark);
-            padding: 0.5rem;
-            border-radius: 4px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+    .add-btn {
+      margin-top: auto;
+      background: var(--light);
+      border: 1px solid var(--dark);
+      color: var(--dark);
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-        .add-btn:hover {
-            background: var(--dark);
-            color: var(--white);
-        }
+    .add-btn:hover {
+      background: var(--dark);
+      color: var(--white);
+    }
 
-        /* Cart Sidebar Drawer */
-        .cart-sidebar {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 350px;
-            height: 100%;
-            background: var(--white);
-            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
-            transition: right 0.3s ease;
-            z-index: 200;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-        }
+    .cart-sidebar {
+      position: fixed;
+      top: 0;
+      right: -400px;
+      width: 350px;
+      height: 100%;
+      background: var(--white);
+      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+      transition: right 0.3s ease;
+      z-index: 200;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+    }
 
-        .cart-sidebar.open { right: 0; }
+    .cart-sidebar.open { right: 0; }
 
-        .cart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 1rem;
-        }
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 1rem;
+    }
 
-        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
+    .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
 
-        .cart-items { flex-grow: 1; overflow-y: auto; margin: 1rem 0; }
-        
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--light);
-            padding-bottom: 0.5rem;
-        }
+    .cart-items { flex-grow: 1; overflow-y: auto; margin: 1rem 0; }
+    
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--light);
+      padding-bottom: 0.5rem;
+    }
 
-        .cart-footer { border-top: 1px solid #ddd; padding-top: 1rem; }
-        .checkout-btn {
-            width: 100%;
-            background: var(--primary);
-            color: var(--white);
-            border: none;
-            padding: 0.8rem;
-            font-size: 1rem;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 1rem;
-        }
-    </style>
+    .cart-footer { border-top: 1px solid #ddd; padding-top: 1rem; }
+    .checkout-btn {
+      width: 100%;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 0.8rem;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <div class="nav-container">
-            <a href="#" class="logo">Snack<span>Fast</span></a>
-            <button class="cart-btn" onclick="toggleCart()">
-                🛒 Cart <span class="cart-badge" id="cart-count">0</span>
-            </button>
-        </div>
-    </header>
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo">Snack<span>Fast</span></a>
+      <button class="cart-btn" id="open-cart-btn">
+        🛒 Cart <span class="cart-badge" id="cart-count">0</span>
+      </button>
+    </div>
+  </header>
 
-    <div class="container">
-        <section class="hero">
-            <h1>Craving Solved in Minutes</h1>
-            <p>Your favorite chips, candy, and drinks delivered straight to your door.</p>
-        </section>
+  <div class="container">
+    <section class="hero">
+      <h1>Craving Solved in Minutes</h1>
+      <p>Your favorite chips, candy, and drinks delivered straight to your door.</p>
+    </section>
 
-        <div class="categories">
-            <button class="filter-btn active" onclick="filterCategory('all', this)">All</button>
-            <button class="filter-btn" onclick="filterCategory('chips', this)">Chips</button>
-            <button class="filter-btn" onclick="filterCategory('sweets', this)">Sweets</button>
-            <button class="filter-btn" onclick="filterCategory('drinks', this)">Drinks</button>
-        </div>
-
-        <div class="product-grid" id="product-grid"></div>
+    <div class="categories" id="category-filters">
+      <button class="filter-btn active" data-category="all">All</button>
+      <button class="filter-btn" data-category="chips">Chips</button>
+      <button class="filter-btn" data-category="sweets">Sweets</button>
+      <button class="filter-btn" data-category="drinks">Drinks</button>
     </div>
 
-    <!-- Slide-out Cart Panel -->
-    <div class="cart-sidebar" id="cart-sidebar">
-        <div class="cart-header">
-            <h2>Your Cart</h2>
-            <button class="close-btn" onclick="toggleCart()">&times;</button>
-        </div>
-        <div class="cart-items" id="cart-items">
-            <p style="text-align: center; color: #888; margin-top: 2rem;">Your cart is empty.</p>
-        </div>
-        <div class="cart-footer">
-            <div style="display: flex; justify-content: space-between; font-weight: bold;">
-                <span>Total:</span>
-                <span id="cart-total">$0.00</span>
-            </div>
-            <button class="checkout-btn" onclick="alert('Checkout integration coming soon!')">Checkout Now</button>
-        </div>
+    <div class="product-grid" id="product-grid"></div>
+  </div>
+
+  <div class="cart-sidebar" id="cart-sidebar">
+    <div class="cart-header">
+      <h2>Your Cart</h2>
+      <button class="close-btn" id="close-cart-btn">&times;</button>
     </div>
+    <div class="cart-items" id="cart-items">
+      <p style="text-align: center; color: #888; margin-top: 2rem;">Your cart is empty.</p>
+    </div>
+    <div class="cart-footer">
+      <div style="display: flex; justify-content: space-between; font-weight: bold;">
+        <span>Total:</span>
+        <span id="cart-total">$0.00</span>
+      </div>
+      <button class="checkout-btn" id="checkout-btn">Checkout Now</button>
+    </div>
+  </div>
 
-    <script>
-        // Updated array with requested items removed
-        const products = [
-            { id: 1, name: "Nacho Cheese Chips", category: "chips", price: 2.99, icon: "🧀" },
-            { id: 3, name: "Gummy Bears", category: "sweets", price: 1.99, icon: "🐻" },
-            { id: 5, name: "Fizzy Cola Soda", category: "drinks", price: 1.79, icon: "🥤" },
-            { id: 6, name: "Energy Drink", category: "drinks", price: 3.99, icon: "⚡" },
-            { id: 7, name: "Salted Pretzels", category: "chips", price: 2.29, icon: "🥨" }
-        ];
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        let cart = [];
+    // Your exact Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyAzp1WSzwYCfANWxJLqJFexHa173hs5Z2Y",
+      authDomain: "kitacat-snackfast.firebaseapp.com",
+      projectId: "kitacat-snackfast",
+      storageBucket: "kitacat-snackfast.firebasestorage.app",
+      messagingSenderId: "980717626350",
+      appId: "1:980717626350:web:e964e44ba922d3662724ff"
+    };
 
-        function renderProducts(items) {
-            const grid = document.getElementById('product-grid');
-            grid.innerHTML = items.map(p => `
-                <div class="card">
-                    <div class="card-img">${p.icon}</div>
-                    <div class="card-body">
-                        <div class="card-title">${p.name}</div>
-                        <div class="card-price">$${p.price.toFixed(2)}</div>
-                        <button class="add-btn" onclick="addToCart(${p.id})">Add to Cart</button>
-                    </div>
-                </div>
-            `).join('');
-        }
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        function filterCategory(category, btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            if (category === 'all') {
-                renderProducts(products);
-            } else {
-                renderProducts(products.filter(p => p.category === category));
-            }
-        }
+    const products = [
+      { id: 1, name: "Nacho Cheese Chips", category: "chips", price: 2.99, icon: "🧀" },
+      { id: 3, name: "Gummy Bears", category: "sweets", price: 1.99, icon: "🐻" },
+      { id: 5, name: "Fizzy Cola Soda", category: "drinks", price: 1.79, icon: "🥤" },
+      { id: 6, name: "Energy Drink", category: "drinks", price: 3.99, icon: "⚡" },
+      { id: 7, name: "Salted Pretzels", category: "chips", price: 2.29, icon: "🥨" }
+    ];
 
-        function addToCart(productId) {
-            const product = products.find(p => p.id === productId);
-            cart.push(product);
-            updateCartUI();
-        }
+    let cart = [];
 
-        function updateCartUI() {
-            document.getElementById('cart-count').innerText = cart.length;
-            
-            const cartItemsContainer = document.getElementById('cart-items');
-            if (cart.length === 0) {
-                cartItemsContainer.innerHTML = '<p style="text-align: center; color: #888; margin-top: 2rem;">Your cart is empty.</p>';
-            } else {
-                cartItemsContainer.innerHTML = cart.map(item => `
-                    <div class="cart-item">
-                        <span>${item.icon} ${item.name}</span>
-                        <strong>$${item.price.toFixed(2)}</strong>
-                    </div>
-                `).join('');
-            }
+    function renderProducts(items) {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = items.map(p => `
+        <div class="card">
+          <div class="card-img">${p.icon}</div>
+          <div class="card-body">
+            <div class="card-title">${p.name}</div>
+            <div class="card-price">$${p.price.toFixed(2)}</div>
+            <button class="add-btn" data-id="${p.id}">Add to Cart</button>
+          </div>
+        </div>
+      `).join('');
 
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
-        }
+      document.querySelectorAll('.add-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = parseInt(e.target.dataset.id);
+          const product = products.find(p => p.id === id);
+          cart.push(product);
+          updateCartUI();
+        });
+      });
+    }
 
-        function toggleCart() {
-            document.getElementById('cart-sidebar').classList.toggle('open');
-        }
+    function updateCartUI() {
+      document.getElementById('cart-count').innerText = cart.length;
+      
+      const cartItemsContainer = document.getElementById('cart-items');
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p style="text-align: center; color: #888; margin-top: 2rem;">Your cart is empty.</p>';
+      } else {
+        cartItemsContainer.innerHTML = cart.map(item => `
+          <div class="cart-item">
+            <span>${item.icon} ${item.name}</span>
+            <strong>$${item.price.toFixed(2)}</strong>
+          </div>
+        `).join('');
+      }
 
-        // Initialize display
-        renderProducts(products);
-    </script>
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+      document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+    }
+
+    // Category Filter Handler
+    document.getElementById('category-filters').addEventListener('click', (e) => {
+      if (!e.target.classList.contains('filter-btn')) return;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      
+      const category = e.target.dataset.category;
+      renderProducts(category === 'all' ? products : products.filter(p => p.category === category));
+    });
+
+    // Cart Sidebar Toggles
+    const sidebar = document.getElementById('cart-sidebar');
+    document.getElementById('open-cart-btn').addEventListener('click', () => sidebar.classList.add('open'));
+    document.getElementById('close-cart-btn').addEventListener('click', () => sidebar.classList.remove('open'));
+
+    // Checkout button pushes order directly to Firebase Firestore
+    document.getElementById('checkout-btn').addEventListener('click', async () => {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+
+      try {
+        const docRef = await addDoc(collection(db, "orders"), {
+          items: cart,
+          total: cart.reduce((sum, item) => sum + item.price, 0),
+          createdAt: serverTimestamp()
+        });
+        alert("Order placed successfully! Firestore ID: " + docRef.id);
+        cart = [];
+        updateCartUI();
+        sidebar.classList.remove('open');
+      } catch (e) {
+        console.error("Error submitting order: ", e);
+        alert("Failed to submit order to Firebase. Make sure Firestore rules are set to test mode.");
+      }
+    });
+
+    renderProducts(products);
+  </script>
 </body>
 </html>
