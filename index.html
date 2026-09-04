@@ -249,6 +249,7 @@
         <div class="product-grid" id="product-grid"></div>
     </div>
 
+    <!-- Slide-out Cart Panel -->
     <div class="cart-sidebar" id="cart-sidebar">
         <div class="cart-header">
             <h2>Your Cart</h2>
@@ -267,15 +268,13 @@
     </div>
 
     <script>
+        // Updated array with requested items removed
         const products = [
             { id: 1, name: "Nacho Cheese Chips", category: "chips", price: 2.99, icon: "🧀" },
-            { id: 2, name: "Spicy Potato Crisps", category: "chips", price: 3.49, icon: "🌶️" },
             { id: 3, name: "Gummy Bears", category: "sweets", price: 1.99, icon: "🐻" },
-            { id: 4, name: "Milk Chocolate Bar", category: "sweets", price: 2.49, icon: "🍫" },
             { id: 5, name: "Fizzy Cola Soda", category: "drinks", price: 1.79, icon: "🥤" },
             { id: 6, name: "Energy Drink", category: "drinks", price: 3.99, icon: "⚡" },
-            { id: 7, name: "Salted Pretzels", category: "chips", price: 2.29, icon: "🥨" },
-            { id: 8, name: "Sour Worms", category: "sweets", price: 1.99, icon: "🐛" }
+            { id: 7, name: "Salted Pretzels", category: "chips", price: 2.29, icon: "🥨" }
         ];
 
         let cart = [];
