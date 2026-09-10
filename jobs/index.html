@@ -1,1 +1,88 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Werken bij SnackFast</title>
+  <link rel="stylesheet" href="../style.css">
+  <script>
+  if (window.location.pathname === '/job' || window.location.pathname === '/job/') {
+    window.location.replace('/jobs');
+  }
+</script>
+</head>
+<body>
 
+  <header>
+    <div class="nav-container">
+      <a href="/" class="logo">Snack<span>Fast</span></a>
+      <a href="/" class="btn btn-outline" style="text-decoration:none;">Terug naar Home</a>
+    </div>
+  </header>
+
+  <div class="job-header">
+    <h1>Join the SnackFast Team 🚀</h1>
+    <p>We groeien hard en zijn altijd op zoek naar toppers om ons team te versterken.</p>
+  </div>
+
+  <div class="container">
+    <div class="job-form-container">
+      <h2 style="margin-bottom:1.5rem;">Sollicitatieformulier</h2>
+      
+      <form id="jobs-form" action="https://formspree.io/f/xppzbpyz" method="POST">
+        <input type="hidden" name="subject" value="Nieuwe Sollicitatie via Website! 💼">
+        
+        <div class="form-group">
+          <label>Volledige Naam:</label>
+          <input type="text" name="Naam" required placeholder="bijv. Jan Jansen" />
+        </div>
+        
+        <div class="form-group">
+          <label>E-mailadres:</label>
+          <input type="email" name="Email" required placeholder="jouw@email.nl" />
+        </div>
+        
+        <div class="form-group">
+          <label>Voorkeurslocatie:</label>
+          <select name="Locatie">
+            <option value="Flexibel">Flexibel (Alle locaties)</option>
+            <option value="Alkmaar">Alkmaar</option>
+            <option value="Amsterdam">Amsterdam</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Motivatie (Waarom jij?):</label>
+          <textarea name="Motivatie" required placeholder="Vertel ons kort over jezelf..." rows="4"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Verstuur Sollicitatie</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Zorgt ervoor dat de pagina niet refresht en een mooie melding toont na Formspree
+    document.getElementById("jobs-form").addEventListener("submit", async function(event) {
+      event.preventDefault();
+      const form = event.target;
+      const btn = form.querySelector('button');
+      btn.innerText = "Bezig met verzenden...";
+      btn.disabled = true;
+
+      try {
+        await fetch(form.action, {
+          method: form.method,
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        form.innerHTML = "<h3 style='color:green; text-align:center;'>Bedankt! Je sollicitatie is ontvangen. We mailen je snel terug! 🎉</h3>";
+      } catch(e) {
+        alert("Oeps, er ging iets mis. Probeer het later nog eens.");
+        btn.innerText = "Verstuur Sollicitatie";
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
