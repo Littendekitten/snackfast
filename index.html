@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SnackFast | Instant Tikkie Delivery</title>
+  <title>SnackFast | Instant Delivery</title>
   <style>
     :root {
       --primary: #ff4757;
@@ -38,14 +38,12 @@
     .card-img img { width: 100%; height: 100%; object-fit: cover; }
 
     .card-body { padding: 1rem; display: flex; flex-direction: column; flex-grow: 1; }
-    .card-title { font-size: 1.1rem; margin-bottom: 0.2rem; }
-    
-    .price-breakdown { font-size: 0.85rem; color: #666; margin-bottom: 0.8rem; }
-    .card-price { font-weight: bold; color: var(--primary); font-size: 1.3rem; }
+    .card-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .card-price { font-weight: bold; color: var(--primary); font-size: 1.3rem; margin-bottom: 1rem; }
 
     .buy-btn {
       margin-top: auto;
-      background: var(--tikkie-blue);
+      background: var(--primary);
       color: var(--white);
       border: none;
       padding: 0.7rem;
@@ -53,13 +51,60 @@
       font-weight: bold;
       font-size: 1rem;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
+      text-align: center;
       transition: background 0.2s;
     }
-    .buy-btn:hover { background: #006699; }
+    .buy-btn:hover { background: #e03e4d; }
+
+    /* Modal / Popup Overlay */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .modal-content {
+      background: var(--white);
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 400px;
+      width: 90%;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-content h3 { margin-bottom: 1rem; color: var(--dark); }
+    .summary-line { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; }
+    .summary-line.total { font-weight: bold; font-size: 1.2rem; border-top: 1px dashed #ccc; padding-top: 0.8rem; margin-top: 0.8rem; }
+    
+    .modal-actions { display: flex; gap: 10px; margin-top: 1.5rem; }
+    .confirm-btn {
+      flex: 1;
+      background: var(--tikkie-blue);
+      color: var(--white);
+      border: none;
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .cancel-btn {
+      background: #ccc;
+      color: var(--dark);
+      border: none;
+      padding: 0.8rem 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -73,7 +118,7 @@
   <div class="container">
     <section class="hero">
       <h1>Instant Snack Delivery</h1>
-      <p>Tap any snack to buy instantly via Tikkie!</p>
+      <p>Select any snack to order instantly via Tikkie!</p>
     </section>
 
     <div class="categories" id="category-filters">
@@ -84,6 +129,31 @@
     </div>
 
     <div class="product-grid" id="product-grid"></div>
+  </div>
+
+  <!-- Order Breakdown Modal Popup -->
+  <div class="modal-overlay" id="checkout-modal">
+    <div class="modal-content">
+      <h3 id="modal-item-name">Order Summary</h3>
+      
+      <div class="summary-line">
+        <span>Item Price:</span>
+        <span id="modal-item-price">€0.00</span>
+      </div>
+      <div class="summary-line">
+        <span>Shipping Fee:</span>
+        <span>€1.00</span>
+      </div>
+      <div class="summary-line total">
+        <span>Total to Pay:</span>
+        <span id="modal-total-price">€0.00</span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="cancel-btn" id="modal-cancel">Cancel</button>
+        <button class="confirm-btn" id="modal-confirm">Pay via Tikkie 🔗</button>
+      </div>
+    </div>
   </div>
 
   <script type="module">
@@ -109,6 +179,7 @@
     const db = getFirestore(app);
 
     let products = [];
+    let selectedProduct = null;
     const PLACEHOLDER_IMAGE = "https://via.placeholder.com/180?text=No+Image";
 
     async function initApp() {
@@ -137,7 +208,6 @@
 
       grid.innerHTML = items.map(p => {
         const itemPrice = Number(p.price);
-        const totalPrice = itemPrice + 1.00; // Adding €1 shipping
         return `
           <div class="card">
             <div class="card-img">
@@ -145,48 +215,70 @@
             </div>
             <div class="card-body">
               <div class="card-title">${p.name}</div>
-              <div class="price-breakdown">
-                <span class="card-price">€${totalPrice.toFixed(2)}</span> 
-                <span>(€${itemPrice.toFixed(2)} + €1.00 shipping)</span>
-              </div>
-              <button class="buy-btn" data-id="${p.id}">⚡ Buy via Tikkie</button>
+              <div class="card-price">€${itemPrice.toFixed(2)}</div>
+              <button class="buy-btn" data-id="${p.id}">Buy Now</button>
             </div>
           </div>
         `;
       }).join('');
 
       document.querySelectorAll('.buy-btn').forEach(btn => {
-        btn.addEventListener('click', async (e) => {
+        btn.addEventListener('click', (e) => {
           const id = e.currentTarget.dataset.id;
-          const product = products.find(p => p.id === id);
-
-          if (!product.tikkieUrl) {
-            alert("No Tikkie URL configured for this item in Firestore!");
-            return;
-          }
-
-          const itemPrice = Number(product.price);
-          const shippingFee = 1.00;
-          const total = itemPrice + shippingFee;
-
-          // 1. Log order to Firestore
-          try {
-            await addDoc(collection(db, "orders"), {
-              items: [{ id: product.id, name: product.name, price: itemPrice }],
-              subtotal: itemPrice,
-              shippingFee: shippingFee,
-              total: total,
-              createdAt: serverTimestamp()
-            });
-          } catch (err) {
-            console.error("Could not save order record:", err);
-          }
-
-          // 2. Open Tikkie link directly
-          window.open(product.tikkieUrl, '_blank');
+          selectedProduct = products.find(p => p.id === id);
+          openModal(selectedProduct);
         });
       });
     }
+
+    // Modal Control Functions
+    const modal = document.getElementById('checkout-modal');
+    
+    function openModal(product) {
+      const itemPrice = Number(product.price);
+      const total = itemPrice + 1.00; // €1.00 shipping
+
+      document.getElementById('modal-item-name').innerText = product.name;
+      document.getElementById('modal-item-price').innerText = `€${itemPrice.toFixed(2)}`;
+      document.getElementById('modal-total-price').innerText = `€${total.toFixed(2)}`;
+      
+      modal.classList.add('active');
+    }
+
+    document.getElementById('modal-cancel').addEventListener('click', () => {
+      modal.classList.remove('active');
+      selectedProduct = null;
+    });
+
+    document.getElementById('modal-confirm').addEventListener('click', async () => {
+      if (!selectedProduct) return;
+      if (!selectedProduct.tikkieUrl) {
+        alert("No Tikkie URL configured for this item in Firestore!");
+        return;
+      }
+
+      const itemPrice = Number(selectedProduct.price);
+      const shippingFee = 1.00;
+      const total = itemPrice + shippingFee;
+
+      // 1. Log order to Firestore
+      try {
+        await addDoc(collection(db, "orders"), {
+          items: [{ id: selectedProduct.id, name: selectedProduct.name, price: itemPrice }],
+          subtotal: itemPrice,
+          shippingFee: shippingFee,
+          total: total,
+          createdAt: serverTimestamp()
+        });
+      } catch (err) {
+        console.error("Could not save order record:", err);
+      }
+
+      // 2. Open Tikkie link
+      const tikkieUrl = selectedProduct.tikkieUrl;
+      modal.classList.remove('active');
+      window.open(tikkieUrl, '_blank');
+    });
 
     // Filter Buttons
     document.getElementById('category-filters').addEventListener('click', (e) => {
