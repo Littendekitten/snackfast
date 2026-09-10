@@ -8,7 +8,7 @@
 </head>
 <body>
 
-  <!-- Auth Overlays (Google Login & Profile Setup) -->
+  <!-- Login Screen -->
   <div class="auth-overlay hidden" id="login-screen">
     <div class="auth-card">
       <h2>SnackFast</h2>
@@ -17,22 +17,26 @@
     </div>
   </div>
 
+  <!-- Onboarding Screen -->
   <div class="auth-overlay hidden" id="onboarding-screen">
     <div class="auth-card">
       <h2>Welkom!</h2>
       <div class="form-group">
         <label>Kies je taal:</label>
-        <select id="language-select"><option value="nl">Nederlands</option><option value="en">English</option></select>
+        <select id="language-select">
+          <option value="nl">Nederlands</option>
+          <option value="en">English</option>
+        </select>
       </div>
       <div class="form-group">
         <label>Gebruikersnaam (max 12):</label>
-        <input type="text" id="username-input" maxlength="12" />
+        <input type="text" id="username-input" maxlength="12" placeholder="Jouw naam" />
       </div>
       <button class="btn btn-primary" id="save-profile-btn">Aan de slag</button>
     </div>
   </div>
 
-  <!-- Main App -->
+  <!-- Main App Container -->
   <div id="app-container" class="hidden">
     <header>
       <div class="nav-container">
@@ -40,7 +44,7 @@
         <div class="nav-actions">
           <a href="/jobs" class="btn btn-primary" id="nav-jobs-btn" style="text-decoration:none; padding:0.4rem 0.8rem; font-size:0.9rem;">Werken bij ons?</a>
           <span id="display-username" style="font-weight:bold; margin-left:10px;"></span>
-          <button class="btn btn-outline" style="padding:0.4rem; border:none; font-size:1.2rem;" id="open-settings-btn">⚙️</button>
+          <button class="btn btn-outline" style="padding:0.4rem; border:none; font-size:1.2rem; cursor:pointer;" id="open-settings-btn">⚙️</button>
           <button class="btn btn-outline" style="padding:0.4rem; font-size:0.8rem;" id="logout-btn">Uitloggen</button>
         </div>
       </div>
@@ -60,7 +64,7 @@
     </div>
   </div>
 
-  <!-- Settings & Checkout Modals omitted for brevity, logic remains identical in app.js -->
+  <!-- Checkout Modal -->
   <div class="modal-overlay" id="checkout-modal">
     <div class="modal-content">
       <h3 id="modal-item-name">Overzicht</h3>
@@ -69,6 +73,35 @@
       <div style="display:flex; gap:10px; margin-top:20px;">
         <button class="btn btn-outline" id="modal-cancel">Annuleren</button>
         <button class="btn btn-tikkie" id="modal-confirm">Betaal via Tikkie</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal-content">
+      <h3 style="margin-bottom: 1rem;">Instellingen</h3>
+      
+      <div class="form-group">
+        <label>Thema:</label>
+        <select id="theme-select">
+          <option value="default">Standaard</option>
+          <option value="dark">Dark Mode</option>
+          <option value="kitacat">KitaCat Special</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Taal / Language:</label>
+        <select id="settings-language-select">
+          <option value="nl">Nederlands</option>
+          <option value="en">English</option>
+        </select>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-top:20px;">
+        <button class="btn btn-outline" id="close-settings-btn">Sluiten</button>
+        <button class="btn btn-primary" id="save-settings-btn">Opslaan</button>
       </div>
     </div>
   </div>
