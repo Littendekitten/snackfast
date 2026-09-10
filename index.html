@@ -82,7 +82,7 @@
 
     .form-group { text-align: left; margin-bottom: 1.2rem; }
     .form-group label { display: block; font-weight: bold; margin-bottom: 0.4rem; font-size: 0.9rem; }
-    .form-group input, .form-group select {
+    .form-group input, .form-group select, .form-group textarea {
       width: 100%;
       padding: 0.7rem;
       border: 1px solid #ccc;
@@ -91,6 +91,7 @@
       background: var(--white);
       color: var(--text-color);
     }
+    .form-group textarea { resize: vertical; min-height: 80px; }
 
     .submit-btn {
       width: 100%;
@@ -113,6 +114,9 @@
     .user-profile { display: flex; align-items: center; gap: 12px; }
     .user-name { font-weight: bold; }
     .icon-btn { background: none; border: none; font-size: 1.3rem; cursor: pointer; padding: 4px; }
+    
+    /* New Jobs Button */
+    .jobs-btn { background: var(--accent); color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: bold; }
     .logout-btn { background: none; border: 1px solid #ccc; color: var(--text-color); padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
 
     .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
@@ -134,35 +138,17 @@
     .card-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
     .card-price { font-weight: bold; color: var(--primary); font-size: 1.3rem; margin-bottom: 1rem; }
 
-    .buy-btn {
-      margin-top: auto;
-      background: var(--primary);
-      color: #ffffff;
-      border: none;
-      padding: 0.7rem;
-      border-radius: 6px;
-      font-weight: bold;
-      font-size: 1rem;
-      cursor: pointer;
-      text-align: center;
-    }
+    .buy-btn { margin-top: auto; background: var(--primary); color: #ffffff; border: none; padding: 0.7rem; border-radius: 6px; font-weight: bold; font-size: 1rem; cursor: pointer; text-align: center; }
     .buy-btn:hover { opacity: 0.9; }
 
     /* Modals */
     .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
+      z-index: 1000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
     }
     .modal-overlay.active { opacity: 1; pointer-events: auto; }
-    .modal-content { background: var(--white); padding: 2rem; border-radius: 12px; max-width: 450px; width: 90%; color: var(--text-color); }
+    .modal-content { background: var(--white); padding: 2rem; border-radius: 12px; max-width: 450px; width: 90%; color: var(--text-color); max-height: 90vh; overflow-y: auto; }
     .modal-content h3 { margin-bottom: 1rem; color: var(--primary); }
     .summary-line { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; }
     .summary-line.total { font-weight: bold; font-size: 1.2rem; border-top: 1px dashed #ccc; padding-top: 0.8rem; margin-top: 0.8rem; }
@@ -181,7 +167,7 @@
 </head>
 <body>
 
-  <!-- STEP 1: Login Screen -->
+  <!-- Login Screen -->
   <div class="auth-overlay" id="login-screen">
     <div class="auth-card">
       <h2>SnackFast</h2>
@@ -193,7 +179,7 @@
     </div>
   </div>
 
-  <!-- STEP 2: Onboarding Screen -->
+  <!-- Onboarding Screen -->
   <div class="auth-overlay hidden" id="onboarding-screen">
     <div class="auth-card">
       <h2>Welkom! / Welcome!</h2>
@@ -224,6 +210,7 @@
       <div class="nav-container">
         <a href="#" class="logo">Snack<span>Fast</span></a>
         <div class="user-profile">
+          <button class="jobs-btn" id="open-jobs-btn">Work with us?</button>
           <span class="user-name" id="display-username"></span>
           <button class="icon-btn" id="open-settings-btn" title="Settings">⚙️</button>
           <button class="logout-btn" id="logout-btn">Uitloggen</button>
@@ -248,13 +235,41 @@
     </div>
   </div>
 
+  <!-- JOBS MODAL -->
+  <div class="modal-overlay" id="jobs-modal">
+    <div class="modal-content">
+      <h3 id="txt-jobs-title">Work with us!</h3>
+      <p style="margin-bottom: 1.5rem; font-size: 0.95rem; opacity: 0.9;" id="txt-jobs-sub">We are searching for new people to work with us. Vul het formulier in en we nemen contact op!</p>
+      
+      <form id="jobs-form">
+        <div class="form-group">
+          <label>Naam / Name:</label>
+          <input type="text" id="job-name" required />
+        </div>
+        <div class="form-group">
+          <label>E-mail:</label>
+          <input type="email" id="job-email" required />
+        </div>
+        <div class="form-group">
+          <label>Motivatie / Motivation:</label>
+          <textarea id="job-motivation" required placeholder="Waarom wil je bij ons werken?"></textarea>
+        </div>
+        <button type="submit" class="submit-btn" id="submit-job-btn">Solliciteer Nu</button>
+      </form>
+
+      <div class="modal-actions" style="margin-top:1rem;">
+        <button class="cancel-btn" id="close-jobs-btn" style="width:100%;">Sluiten</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SETTINGS MODAL -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-content">
       <h3 id="txt-settings-title">Instellingen</h3>
       
       <div class="form-group">
-        <label id="lbl-set-username">Gebruikersnaam veranderen (max 12 tekens):</label>
+        <label id="lbl-set-username">Gebruikersnaam veranderen:</label>
         <input type="text" id="settings-username-input" maxlength="12" />
       </div>
 
@@ -314,25 +329,8 @@
   <!-- FIREBASE ENGINE & SCRIPT -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { 
-      getAuth, 
-      GoogleAuthProvider, 
-      signInWithPopup, 
-      signOut, 
-      deleteUser,
-      onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { 
-      getFirestore, 
-      collection, 
-      getDocs, 
-      doc, 
-      getDoc, 
-      setDoc, 
-      deleteDoc,
-      addDoc, 
-      serverTimestamp 
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, deleteUser, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, getDocs, doc, getDoc, setDoc, deleteDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAzp1WSzwYCfANWxJLqJFexHa173hs5Z2Y",
@@ -352,53 +350,32 @@
     let userProfile = null;
     let products = [];
     let selectedProduct = null;
+    
+    // YOUR FORMSPREE ENDPOINT
+    const FORMSPREE_URL = "https://formspree.io/f/xppzbpyz"; 
     const PLACEHOLDER_IMAGE = "https://via.placeholder.com/180?text=No+Image";
 
     // Translations Dictionary
     const translations = {
       nl: {
-        heroTitle: "Snelle Bezorging",
-        heroSub: "Selecteer een snack om direct via Tikkie te bestellen!",
+        heroTitle: "Snelle Bezorging", heroSub: "Selecteer een snack om direct via Tikkie te bestellen!",
         catAll: "Alles", catChips: "Chips", catSweets: "Snoep", catDrinks: "Dranken",
         buyBtn: "Nu Kopen", lblUsername: "Gebruikersnaam (max 12 tekens):", btnStart: "Aan de slag",
         itemPrice: "Prijs product:", shipping: "Verzendkosten:", total: "Totaal te betalen:",
-        cancel: "Annuleren", payTikkie: "Betaal via Tikkie 🔗", logout: "Uitloggen",
+        cancel: "Annuleren", payTikkie: "Betaal via Tikkie 🔗", logout: "Uitloggen", jobsBtn: "Work with us?",
         settingsTitle: "Instellingen", setUsername: "Gebruikersnaam veranderen:", setLang: "Taal wijzigen:",
         setTheme: "Thema kiezen:", save: "Opslaan", deleteAcc: "Account Verwijderen", close: "Sluiten",
         confirmDelete: "Weet je zeker dat je je account wilt verwijderen?"
       },
       en: {
-        heroTitle: "Instant Delivery",
-        heroSub: "Select any snack to order instantly via Tikkie!",
+        heroTitle: "Instant Delivery", heroSub: "Select any snack to order instantly via Tikkie!",
         catAll: "All", catChips: "Chips", catSweets: "Sweets", catDrinks: "Drinks",
         buyBtn: "Buy Now", lblUsername: "Username (max 12 chars):", btnStart: "Get Started",
         itemPrice: "Item Price:", shipping: "Shipping Fee:", total: "Total to Pay:",
-        cancel: "Cancel", payTikkie: "Pay via Tikkie 🔗", logout: "Log Out",
+        cancel: "Cancel", payTikkie: "Pay via Tikkie 🔗", logout: "Log Out", jobsBtn: "Work with us?",
         settingsTitle: "Settings", setUsername: "Change Username:", setLang: "Change Language:",
         setTheme: "Select Theme:", save: "Save", deleteAcc: "Delete Account", close: "Close",
         confirmDelete: "Are you sure you want to delete your account?"
-      },
-      de: {
-        heroTitle: "Schnelle Lieferung",
-        heroSub: "Wähle einen Snack zum sofortigen Kauf via Tikkie!",
-        catAll: "Alle", catChips: "Chips", catSweets: "Süßigkeiten", catDrinks: "Getränke",
-        buyBtn: "Jetzt Kaufen", lblUsername: "Benutzername (max. 12 Zeichen):", btnStart: "Loslegen",
-        itemPrice: "Artikelpreis:", shipping: "Versandkosten:", total: "Gesamtbetrag:",
-        cancel: "Abbrechen", payTikkie: "Bezahlen mit Tikkie 🔗", logout: "Abmelden",
-        settingsTitle: "Einstellungen", setUsername: "Benutzername ändern:", setLang: "Sprache ändern:",
-        setTheme: "Thema wählen:", save: "Speichern", deleteAcc: "Konto löschen", close: "Schließen",
-        confirmDelete: "Möchtest du dein Konto wirklich löschen?"
-      },
-      fr: {
-        heroTitle: "Livraison Rapide",
-        heroSub: "Sélectionnez un snack pour commander via Tikkie !",
-        catAll: "Tous", catChips: "Chips", catSweets: "Friandises", catDrinks: "Boissons",
-        buyBtn: "Acheter", lblUsername: "Nom d'utilisateur (max 12 car.):", btnStart: "Commencer",
-        itemPrice: "Prix de l'article :", shipping: "Frais de port :", total: "Total à payer :",
-        cancel: "Annuler", payTikkie: "Payer via Tikkie 🔗", logout: "Déconnexion",
-        settingsTitle: "Paramètres", setUsername: "Changer de nom d'utilisateur :", setLang: "Changer de langue :",
-        setTheme: "Choisir le thème :", save: "Enregistrer", deleteAcc: "Supprimer le compte", close: "Fermer",
-        confirmDelete: "Êtes-vous sûr de vouloir supprimer votre compte ?"
       }
     };
 
@@ -418,15 +395,14 @@
       document.getElementById('modal-cancel').innerText = t.cancel;
       document.getElementById('modal-confirm').innerText = t.payTikkie;
       document.getElementById('logout-btn').innerText = t.logout;
-
-      // Settings Labels
+      document.getElementById('open-jobs-btn').innerText = t.jobsBtn;
       document.getElementById('txt-settings-title').innerText = t.settingsTitle;
       document.getElementById('lbl-set-username').innerText = t.setUsername;
       document.getElementById('lbl-set-lang').innerText = t.setLang;
       document.getElementById('lbl-set-theme').innerText = t.setTheme;
       document.getElementById('save-settings-btn').innerText = t.save;
       document.getElementById('delete-account-btn').innerText = t.deleteAcc;
-      document.getElementById('close-settings-btn').innerText = t.close;
+      document.querySelectorAll('.cancel-btn').forEach(btn => btn.innerText = t.close);
     }
 
     function applyTheme(theme) {
@@ -439,12 +415,10 @@
       });
     }
 
-    // Auth State Monitor
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         currentUser = user;
         document.getElementById('login-screen').classList.add('hidden');
-        
         const userDocRef = doc(db, "users", user.uid);
         const userSnap = await getDoc(userDocRef);
 
@@ -464,25 +438,16 @@
     });
 
     document.getElementById('google-login-btn').addEventListener('click', () => signInWithPopup(auth, googleProvider));
-
     document.getElementById('language-select').addEventListener('change', (e) => applyTranslations(e.target.value));
 
     document.getElementById('save-profile-btn').addEventListener('click', async () => {
       const usernameInput = document.getElementById('username-input').value.trim();
       const selectedLang = document.getElementById('language-select').value;
-
       if (!usernameInput) return alert("Vul een gebruikersnaam in.");
-      if (usernameInput.length > 12) return alert("Gebruikersnaam mag max 12 tekens zijn.");
-
-      userProfile = {
-        username: usernameInput,
-        language: selectedLang,
-        theme: 'light',
-        email: currentUser.email,
-        createdAt: serverTimestamp()
-      };
-
+      
+      userProfile = { username: usernameInput, language: selectedLang, theme: 'light', email: currentUser.email, createdAt: serverTimestamp() };
       await setDoc(doc(db, "users", currentUser.uid), userProfile);
+      
       document.getElementById('onboarding-screen').classList.add('hidden');
       showAppScreen();
     });
@@ -497,7 +462,51 @@
 
     document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
 
-    // Settings Modal Handlers
+    // --- JOBS MODAL & FORMSPREE ---
+    const jobsModal = document.getElementById('jobs-modal');
+    document.getElementById('open-jobs-btn').addEventListener('click', () => {
+      // Pre-fill email and name if possible
+      document.getElementById('job-email').value = currentUser.email || "";
+      document.getElementById('job-name').value = userProfile.username || "";
+      jobsModal.classList.add('active');
+    });
+    
+    document.getElementById('close-jobs-btn').addEventListener('click', () => jobsModal.classList.remove('active'));
+
+    document.getElementById('jobs-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submit-job-btn');
+      submitBtn.innerText = "Bezig...";
+      submitBtn.disabled = true;
+
+      const name = document.getElementById('job-name').value;
+      const email = document.getElementById('job-email').value;
+      const motivation = document.getElementById('job-motivation').value;
+
+      try {
+        await fetch(FORMSPREE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({
+            subject: `Nieuwe Sollicitatie van ${name}! 💼`,
+            FormulierType: "Work With Us Applicatie",
+            Naam: name,
+            Email: email,
+            Motivatie: motivation
+          })
+        });
+        alert("Je sollicitatie is succesvol verzonden! We nemen snel contact op.");
+        jobsModal.classList.remove('active');
+        document.getElementById('jobs-form').reset();
+      } catch (err) {
+        alert("Oeps, er ging iets mis bij het verzenden. Probeer het later opnieuw.");
+      } finally {
+        submitBtn.innerText = "Solliciteer Nu";
+        submitBtn.disabled = false;
+      }
+    });
+
+    // --- SETTINGS MODAL ---
     const settingsModal = document.getElementById('settings-modal');
     document.getElementById('open-settings-btn').addEventListener('click', () => {
       document.getElementById('settings-username-input').value = userProfile.username;
@@ -516,51 +525,26 @@
       const newUsername = document.getElementById('settings-username-input').value.trim();
       const newLang = document.getElementById('settings-lang-select').value;
       const activeThemeBtn = document.querySelector('.theme-btn.active');
-      const newTheme = activeThemeBtn ? activeThemeBtn.dataset.theme : 'light';
-
+      
       if (!newUsername) return alert("Vul een gebruikersnaam in.");
-      if (newUsername.length > 12) return alert("Gebruikersnaam mag max 12 tekens zijn.");
-
-      userProfile.username = newUsername;
-      userProfile.language = newLang;
-      userProfile.theme = newTheme;
+      userProfile.username = newUsername; userProfile.language = newLang; userProfile.theme = activeThemeBtn.dataset.theme;
 
       await setDoc(doc(db, "users", currentUser.uid), userProfile, { merge: true });
-      
       document.getElementById('display-username').innerText = userProfile.username;
       applyTranslations(userProfile.language);
       settingsModal.classList.remove('active');
       renderProducts(products);
     });
 
-    document.getElementById('delete-account-btn').addEventListener('click', async () => {
-      const lang = userProfile.language || 'nl';
-      const confirmMsg = translations[lang]?.confirmDelete || translations.nl.confirmDelete;
-
-      if (confirm(confirmMsg)) {
-        try {
-          await deleteDoc(doc(db, "users", currentUser.uid));
-          await deleteUser(currentUser);
-          alert("Account verwijderd.");
-        } catch (err) {
-          alert("Fout bij verwijderen: " + err.message);
-        }
-      }
-    });
-
-    // Load Products
+    // --- PRODUCTS & CHECKOUT ---
     async function loadProducts() {
-      const grid = document.getElementById('product-grid');
-      grid.innerHTML = `<p style="text-align:center; width:100%;">Laden...</p>`;
-      
       try {
-        const querySnapshot = await getDocs(collection(db, "products"));
+        const snap = await getDocs(collection(db, "products"));
         products = [];
-        querySnapshot.forEach((doc) => products.push({ id: doc.id, ...doc.data() }));
+        snap.forEach(d => products.push({ id: d.id, ...d.data() }));
         renderProducts(products);
       } catch (err) {
-        console.error(err);
-        grid.innerHTML = `<p style="color:red; text-align:center; width:100%;">Fout bij laden.</p>`;
+        console.error("Fout bij laden producten", err);
       }
     }
 
@@ -569,16 +553,9 @@
       const lang = userProfile?.language || 'nl';
       const buyText = translations[lang]?.buyBtn || translations.nl.buyBtn;
 
-      if (items.length === 0) {
-        grid.innerHTML = `<p style="text-align:center; width:100%;">Geen producten gevonden.</p>`;
-        return;
-      }
-
       grid.innerHTML = items.map(p => `
         <div class="card">
-          <div class="card-img">
-            <img src="${p.imageUrl || PLACEHOLDER_IMAGE}" alt="${p.name}" onerror="this.src='${PLACEHOLDER_IMAGE}'" />
-          </div>
+          <div class="card-img"><img src="${p.imageUrl || PLACEHOLDER_IMAGE}" onerror="this.src='${PLACEHOLDER_IMAGE}'" /></div>
           <div class="card-body">
             <div class="card-title">${p.name}</div>
             <div class="card-price">€${Number(p.price).toFixed(2)}</div>
@@ -589,56 +566,59 @@
 
       document.querySelectorAll('.buy-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-          const id = e.currentTarget.dataset.id;
-          selectedProduct = products.find(p => p.id === id);
-          openModal(selectedProduct);
+          selectedProduct = products.find(p => p.id === e.currentTarget.dataset.id);
+          openCheckout(selectedProduct);
         });
       });
     }
 
-    // Modal Control Logic
-    const modal = document.getElementById('checkout-modal');
-    function openModal(product) {
-      const itemPrice = Number(product.price);
-      const total = itemPrice + 1.00;
-
+    const checkoutModal = document.getElementById('checkout-modal');
+    function openCheckout(product) {
+      const price = Number(product.price);
       document.getElementById('modal-item-name').innerText = product.name;
-      document.getElementById('modal-item-price').innerText = `€${itemPrice.toFixed(2)}`;
-      document.getElementById('modal-total-price').innerText = `€${total.toFixed(2)}`;
-      
-      modal.classList.add('active');
+      document.getElementById('modal-item-price').innerText = `€${price.toFixed(2)}`;
+      document.getElementById('modal-total-price').innerText = `€${(price + 1.00).toFixed(2)}`;
+      checkoutModal.classList.add('active');
     }
 
-    document.getElementById('modal-cancel').addEventListener('click', () => {
-      modal.classList.remove('active');
-      selectedProduct = null;
-    });
+    document.getElementById('modal-cancel').addEventListener('click', () => checkoutModal.classList.remove('active'));
 
+    // --- ORDER CONFIRMATION & FORMSPREE EMAIL ---
     document.getElementById('modal-confirm').addEventListener('click', async () => {
-      if (!selectedProduct) return;
-      if (!selectedProduct.tikkieUrl) return alert("Geen Tikkie URL ingesteld!");
+      if (!selectedProduct || !selectedProduct.tikkieUrl) return alert("Geen Tikkie URL ingesteld!");
 
       const itemPrice = Number(selectedProduct.price);
-      const shippingFee = 1.00;
-      const total = itemPrice + shippingFee;
+      const total = itemPrice + 1.00;
 
+      // 1. Opslaan in Firebase Firestore
       try {
         await addDoc(collection(db, "orders"), {
-          userId: currentUser.uid,
-          username: userProfile.username,
+          userId: currentUser.uid, username: userProfile.username,
           items: [{ id: selectedProduct.id, name: selectedProduct.name, price: itemPrice }],
-          subtotal: itemPrice,
-          shippingFee: shippingFee,
-          total: total,
+          subtotal: itemPrice, shippingFee: 1.00, total: total, status: "PENDING_PAYMENT",
           createdAt: serverTimestamp()
         });
-      } catch (err) {
-        console.error("Order opslaan mislukt:", err);
-      }
+      } catch (err) { console.error("Order opslaan mislukt:", err); }
 
-      const tikkieUrl = selectedProduct.tikkieUrl;
-      modal.classList.remove('active');
-      window.open(tikkieUrl, '_blank');
+      // 2. Formspree Email versturen
+      try {
+        await fetch(FORMSPREE_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Accept": "application/json" },
+          body: JSON.stringify({
+            subject: `Nieuwe Bestelling van ${userProfile.username}! 🍿`,
+            EmailKlant: currentUser.email,
+            Gebruikersnaam: userProfile.username,
+            Product: selectedProduct.name,
+            TeBetalen: `€${total.toFixed(2)}`,
+            Status: "Gebruiker is doorgestuurd naar Tikkie (Check of er daadwerkelijk is betaald!)"
+          })
+        });
+      } catch (error) { console.error("Formspree e-mail mislukt:", error); }
+
+      // 3. Stuur door naar Tikkie
+      checkoutModal.classList.remove('active');
+      window.open(selectedProduct.tikkieUrl, '_blank');
     });
 
     // Category Filtering
@@ -646,9 +626,8 @@
       if (!e.target.classList.contains('filter-btn')) return;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       e.target.classList.add('active');
-      
-      const category = e.target.dataset.category;
-      renderProducts(category === 'all' ? products : products.filter(p => p.category === category));
+      const cat = e.target.dataset.category;
+      renderProducts(cat === 'all' ? products : products.filter(p => p.category === cat));
     });
   </script>
 </body>
