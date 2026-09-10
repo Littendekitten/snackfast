@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="nl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SnackFast | Instant Delivery</title>
+  <title>SnackFast | Snelle Bezorging</title>
   <style>
     :root {
       --primary: #ff4757;
@@ -17,10 +17,77 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
     body { background-color: var(--light); color: var(--dark); }
 
+    /* Auth & Setup Screens */
+    .auth-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: var(--light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    .auth-card {
+      background: var(--white);
+      padding: 2.5rem;
+      border-radius: 12px;
+      max-width: 420px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    .auth-card h2 { margin-bottom: 0.5rem; color: var(--primary); }
+    .auth-card p { color: #666; margin-bottom: 1.5rem; font-size: 0.95rem; }
+
+    .google-btn {
+      width: 100%;
+      background: var(--white);
+      color: var(--dark);
+      border: 1px solid #ccc;
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-size: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .google-btn:hover { background: #f8f9fa; }
+
+    .form-group { text-align: left; margin-bottom: 1.2rem; }
+    .form-group label { display: block; font-weight: bold; margin-bottom: 0.4rem; font-size: 0.9rem; }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .submit-btn {
+      width: 100%;
+      background: var(--primary);
+      color: var(--white);
+      border: none;
+      padding: 0.8rem;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    /* Main App Header & Layout */
     header { background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
     .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; }
     .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-decoration: none; }
     .logo span { color: var(--accent); }
+
+    .user-profile { display: flex; align-items: center; gap: 15px; }
+    .user-name { font-weight: bold; }
+    .logout-btn { background: none; border: 1px solid #ccc; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.85rem; }
 
     .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
     .hero { background: linear-gradient(135deg, var(--primary), var(--accent)); color: var(--white); padding: 3rem 2rem; border-radius: 12px; text-align: center; margin-bottom: 2rem; }
@@ -52,7 +119,6 @@
       font-size: 1rem;
       cursor: pointer;
       text-align: center;
-      transition: background 0.2s;
     }
     .buy-btn:hover { background: #e03e4d; }
 
@@ -69,103 +135,134 @@
       pointer-events: none;
       transition: opacity 0.2s ease;
     }
-    .modal-overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .modal-content {
-      background: var(--white);
-      padding: 2rem;
-      border-radius: 12px;
-      max-width: 400px;
-      width: 90%;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-content { background: var(--white); padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; }
     .modal-content h3 { margin-bottom: 1rem; color: var(--dark); }
     .summary-line { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 1rem; }
     .summary-line.total { font-weight: bold; font-size: 1.2rem; border-top: 1px dashed #ccc; padding-top: 0.8rem; margin-top: 0.8rem; }
     
     .modal-actions { display: flex; gap: 10px; margin-top: 1.5rem; }
-    .confirm-btn {
-      flex: 1;
-      background: var(--tikkie-blue);
-      color: var(--white);
-      border: none;
-      padding: 0.8rem;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .cancel-btn {
-      background: #ccc;
-      color: var(--dark);
-      border: none;
-      padding: 0.8rem 1rem;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+    .confirm-btn { flex: 1; background: var(--tikkie-blue); color: var(--white); border: none; padding: 0.8rem; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .cancel-btn { background: #ccc; color: var(--dark); border: none; padding: 0.8rem 1rem; border-radius: 6px; font-weight: bold; cursor: pointer; }
+
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <header>
-    <div class="nav-container">
-      <a href="#" class="logo">Snack<span>Fast</span></a>
+  <!-- STEP 1: Login Screen -->
+  <div class="auth-overlay" id="login-screen">
+    <div class="auth-card">
+      <h2>SnackFast</h2>
+      <p>Log in met Google om verder te gaan</p>
+      <button class="google-btn" id="google-login-btn">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.616z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
+        Inloggen met Google
+      </button>
     </div>
-  </header>
-
-  <div class="container">
-    <section class="hero">
-      <h1>Instant Snack Delivery</h1>
-      <p>Select any snack to order instantly via Tikkie!</p>
-    </section>
-
-    <div class="categories" id="category-filters">
-      <button class="filter-btn active" data-category="all">All</button>
-      <button class="filter-btn" data-category="chips">Chips</button>
-      <button class="filter-btn" data-category="sweets">Sweets</button>
-      <button class="filter-btn" data-category="drinks">Drinks</button>
-    </div>
-
-    <div class="product-grid" id="product-grid"></div>
   </div>
 
-  <!-- Order Breakdown Modal Popup -->
+  <!-- STEP 2: Onboarding Screen (Language & Username) -->
+  <div class="auth-overlay hidden" id="onboarding-screen">
+    <div class="auth-card">
+      <h2>Welkom! / Welcome!</h2>
+      <p>Stel je profiel in / Set up your profile</p>
+      
+      <div class="form-group">
+        <label for="language-select">Kies je taal / Choose language:</label>
+        <select id="language-select">
+          <option value="nl" selected>Dutch (Default)</option>
+          <option value="en">English</option>
+          <option value="de">German</option>
+          <option value="fr">French</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="username-input" id="lbl-username">Gebruikersnaam (max 12 tekens):</label>
+        <input type="text" id="username-input" maxlength="12" placeholder="bijv. SnackKing" />
+      </div>
+
+      <button class="submit-btn" id="save-profile-btn">Aan de slag / Get Started</button>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="app-container" class="hidden">
+    <header>
+      <div class="nav-container">
+        <a href="#" class="logo">Snack<span>Fast</span></a>
+        <div class="user-profile">
+          <span class="user-name" id="display-username"></span>
+          <button class="logout-btn" id="logout-btn">Uitloggen</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <section class="hero">
+        <h1 id="txt-hero-title">Snelle Bezorging</h1>
+        <p id="txt-hero-sub">Selecteer een snack om direct via Tikkie te bestellen!</p>
+      </section>
+
+      <div class="categories" id="category-filters">
+        <button class="filter-btn active" data-category="all" id="cat-all">Alles</button>
+        <button class="filter-btn" data-category="chips" id="cat-chips">Chips</button>
+        <button class="filter-btn" data-category="sweets" id="cat-sweets">Snoep</button>
+        <button class="filter-btn" data-category="drinks" id="cat-drinks">Dranken</button>
+      </div>
+
+      <div class="product-grid" id="product-grid"></div>
+    </div>
+  </div>
+
+  <!-- Order Modal -->
   <div class="modal-overlay" id="checkout-modal">
     <div class="modal-content">
-      <h3 id="modal-item-name">Order Summary</h3>
+      <h3 id="modal-item-name">Overzicht</h3>
       
       <div class="summary-line">
-        <span>Item Price:</span>
+        <span id="lbl-item-price">Prijs product:</span>
         <span id="modal-item-price">€0.00</span>
       </div>
       <div class="summary-line">
-        <span>Shipping Fee:</span>
+        <span id="lbl-shipping">Verzendkosten:</span>
         <span>€1.00</span>
       </div>
       <div class="summary-line total">
-        <span>Total to Pay:</span>
+        <span id="lbl-total">Totaal te betalen:</span>
         <span id="modal-total-price">€0.00</span>
       </div>
 
       <div class="modal-actions">
-        <button class="cancel-btn" id="modal-cancel">Cancel</button>
-        <button class="confirm-btn" id="modal-confirm">Pay via Tikkie 🔗</button>
+        <button class="cancel-btn" id="modal-cancel">Annuleren</button>
+        <button class="confirm-btn" id="modal-confirm">Betaal via Tikkie 🔗</button>
       </div>
     </div>
   </div>
 
+  <!-- Firebase Script Logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { 
       getFirestore, 
       collection, 
       getDocs, 
+      doc, 
+      getDoc, 
+      setDoc, 
       addDoc, 
       serverTimestamp 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    // Firebase Credentials
     const firebaseConfig = {
       apiKey: "AIzaSyAzp1WSzwYCfANWxJLqJFexHa173hs5Z2Y",
       authDomain: "kitacat-snackfast.firebaseapp.com",
@@ -176,15 +273,188 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
 
+    let currentUser = null;
+    let userProfile = null;
     let products = [];
     let selectedProduct = null;
     const PLACEHOLDER_IMAGE = "https://via.placeholder.com/180?text=No+Image";
 
-    async function initApp() {
+    // Translations Dictionary
+    const translations = {
+      nl: {
+        heroTitle: "Snelle Bezorging",
+        heroSub: "Selecteer een snack om direct via Tikkie te bestellen!",
+        catAll: "Alles",
+        catChips: "Chips",
+        catSweets: "Snoep",
+        catDrinks: "Dranken",
+        buyBtn: "Nu Kopen",
+        lblUsername: "Gebruikersnaam (max 12 tekens):",
+        btnStart: "Aan de slag",
+        itemPrice: "Prijs product:",
+        shipping: "Verzendkosten:",
+        total: "Totaal te betalen:",
+        cancel: "Annuleren",
+        payTikkie: "Betaal via Tikkie 🔗",
+        logout: "Uitloggen"
+      },
+      en: {
+        heroTitle: "Instant Delivery",
+        heroSub: "Select any snack to order instantly via Tikkie!",
+        catAll: "All",
+        catChips: "Chips",
+        catSweets: "Sweets",
+        catDrinks: "Drinks",
+        buyBtn: "Buy Now",
+        lblUsername: "Username (max 12 chars):",
+        btnStart: "Get Started",
+        itemPrice: "Item Price:",
+        shipping: "Shipping Fee:",
+        total: "Total to Pay:",
+        cancel: "Cancel",
+        payTikkie: "Pay via Tikkie 🔗",
+        logout: "Log Out"
+      },
+      de: {
+        heroTitle: "Schnelle Lieferung",
+        heroSub: "Wähle einen Snack zum sofortigen Kauf via Tikkie!",
+        catAll: "Alle",
+        catChips: "Chips",
+        catSweets: "Süßigkeiten",
+        catDrinks: "Getränke",
+        buyBtn: "Jetzt Kaufen",
+        lblUsername: "Benutzername (max. 12 Zeichen):",
+        btnStart: "Loslegen",
+        itemPrice: "Artikelpreis:",
+        shipping: "Versandkosten:",
+        total: "Gesamtbetrag:",
+        cancel: "Abbrechen",
+        payTikkie: "Bezahlen mit Tikkie 🔗",
+        logout: "Abmelden"
+      },
+      fr: {
+        heroTitle: "Livraison Rapide",
+        heroSub: "Sélectionnez un snack pour commander via Tikkie !",
+        catAll: "Tous",
+        catChips: "Chips",
+        catSweets: "Friandises",
+        catDrinks: "Boissons",
+        buyBtn: "Acheter",
+        lblUsername: "Nom d'utilisateur (max 12 car.):",
+        btnStart: "Commencer",
+        itemPrice: "Prix de l'article :",
+        shipping: "Frais de port :",
+        total: "Total à payer :",
+        cancel: "Annuler",
+        payTikkie: "Payer via Tikkie 🔗",
+        logout: "Déconnexion"
+      }
+    };
+
+    // Apply active translations to UI elements
+    function applyTranslations(lang) {
+      const t = translations[lang] || translations.nl;
+      document.getElementById('txt-hero-title').innerText = t.heroTitle;
+      document.getElementById('txt-hero-sub').innerText = t.heroSub;
+      document.getElementById('cat-all').innerText = t.catAll;
+      document.getElementById('cat-chips').innerText = t.catChips;
+      document.getElementById('cat-sweets').innerText = t.catSweets;
+      document.getElementById('cat-drinks').innerText = t.catDrinks;
+      document.getElementById('lbl-username').innerText = t.lblUsername;
+      document.getElementById('save-profile-btn').innerText = t.btnStart;
+      document.getElementById('lbl-item-price').innerText = t.itemPrice;
+      document.getElementById('lbl-shipping').innerText = t.shipping;
+      document.getElementById('lbl-total').innerText = t.total;
+      document.getElementById('modal-cancel').innerText = t.cancel;
+      document.getElementById('modal-confirm').innerText = t.payTikkie;
+      document.getElementById('logout-btn').innerText = t.logout;
+    }
+
+    // Auth State Monitor
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        currentUser = user;
+        document.getElementById('login-screen').classList.add('hidden');
+        
+        // Fetch user profile from Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDocRef);
+
+        if (userSnap.exists()) {
+          userProfile = userSnap.data();
+          showAppScreen();
+        } else {
+          // Open Onboarding screen to set language and username
+          document.getElementById('onboarding-screen').classList.remove('hidden');
+        }
+      } else {
+        currentUser = null;
+        userProfile = null;
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('onboarding-screen').classList.add('hidden');
+        document.getElementById('app-container').classList.add('hidden');
+      }
+    });
+
+    // Google Login Action
+    document.getElementById('google-login-btn').addEventListener('click', async () => {
+      try {
+        await signInWithPopup(auth, googleProvider);
+      } catch (err) {
+        alert("Inloggen mislukt: " + err.message);
+      }
+    });
+
+    // Language Dropdown Handler
+    document.getElementById('language-select').addEventListener('change', (e) => {
+      applyTranslations(e.target.value);
+    });
+
+    // Onboarding Form Submit Action
+    document.getElementById('save-profile-btn').addEventListener('click', async () => {
+      const usernameInput = document.getElementById('username-input').value.trim();
+      const selectedLang = document.getElementById('language-select').value;
+
+      if (!usernameInput) {
+        alert("Vul een gebruikersnaam in.");
+        return;
+      }
+      if (usernameInput.length > 12) {
+        alert("Gebruikersnaam mag maximaal 12 tekens lang zijn.");
+        return;
+      }
+
+      userProfile = {
+        username: usernameInput,
+        language: selectedLang,
+        email: currentUser.email,
+        createdAt: serverTimestamp()
+      };
+
+      await setDoc(doc(db, "users", currentUser.uid), userProfile);
+      document.getElementById('onboarding-screen').classList.add('hidden');
+      showAppScreen();
+    });
+
+    // Show App Function
+    function showAppScreen() {
+      document.getElementById('display-username').innerText = userProfile.username;
+      applyTranslations(userProfile.language || 'nl');
+      document.getElementById('app-container').classList.remove('hidden');
+      loadProducts();
+    }
+
+    // Logout Handler
+    document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+
+    // Load Products from Firestore Collection
+    async function loadProducts() {
       const grid = document.getElementById('product-grid');
-      grid.innerHTML = `<p style="text-align:center; width:100%;">Loading snacks from Firestore...</p>`;
+      grid.innerHTML = `<p style="text-align:center; width:100%;">Laden van producten...</p>`;
       
       try {
         const querySnapshot = await getDocs(collection(db, "products"));
@@ -195,32 +465,32 @@
         renderProducts(products);
       } catch (err) {
         console.error(err);
-        grid.innerHTML = `<p style="color:red; text-align:center; width:100%;">Failed to load snacks. Check Firestore rules!</p>`;
+        grid.innerHTML = `<p style="color:red; text-align:center; width:100%;">Fout bij het laden van producten.</p>`;
       }
     }
 
     function renderProducts(items) {
       const grid = document.getElementById('product-grid');
+      const lang = userProfile?.language || 'nl';
+      const buyText = translations[lang]?.buyBtn || translations.nl.buyBtn;
+
       if (items.length === 0) {
-        grid.innerHTML = `<p style="text-align:center; width:100%;">No snacks found in Firestore collection 'products'.</p>`;
+        grid.innerHTML = `<p style="text-align:center; width:100%;">Geen producten gevonden.</p>`;
         return;
       }
 
-      grid.innerHTML = items.map(p => {
-        const itemPrice = Number(p.price);
-        return `
-          <div class="card">
-            <div class="card-img">
-              <img src="${p.imageUrl || PLACEHOLDER_IMAGE}" alt="${p.name}" onerror="this.src='${PLACEHOLDER_IMAGE}'" />
-            </div>
-            <div class="card-body">
-              <div class="card-title">${p.name}</div>
-              <div class="card-price">€${itemPrice.toFixed(2)}</div>
-              <button class="buy-btn" data-id="${p.id}">Buy Now</button>
-            </div>
+      grid.innerHTML = items.map(p => `
+        <div class="card">
+          <div class="card-img">
+            <img src="${p.imageUrl || PLACEHOLDER_IMAGE}" alt="${p.name}" onerror="this.src='${PLACEHOLDER_IMAGE}'" />
           </div>
-        `;
-      }).join('');
+          <div class="card-body">
+            <div class="card-title">${p.name}</div>
+            <div class="card-price">€${Number(p.price).toFixed(2)}</div>
+            <button class="buy-btn" data-id="${p.id}">${buyText}</button>
+          </div>
+        </div>
+      `).join('');
 
       document.querySelectorAll('.buy-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -231,12 +501,11 @@
       });
     }
 
-    // Modal Control Functions
+    // Modal Control Logic
     const modal = document.getElementById('checkout-modal');
-    
     function openModal(product) {
       const itemPrice = Number(product.price);
-      const total = itemPrice + 1.00; // €1.00 shipping
+      const total = itemPrice + 1.00;
 
       document.getElementById('modal-item-name').innerText = product.name;
       document.getElementById('modal-item-price').innerText = `€${itemPrice.toFixed(2)}`;
@@ -253,7 +522,7 @@
     document.getElementById('modal-confirm').addEventListener('click', async () => {
       if (!selectedProduct) return;
       if (!selectedProduct.tikkieUrl) {
-        alert("No Tikkie URL configured for this item in Firestore!");
+        alert("Geen Tikkie URL ingesteld voor dit product!");
         return;
       }
 
@@ -261,9 +530,10 @@
       const shippingFee = 1.00;
       const total = itemPrice + shippingFee;
 
-      // 1. Log order to Firestore
       try {
         await addDoc(collection(db, "orders"), {
+          userId: currentUser.uid,
+          username: userProfile.username,
           items: [{ id: selectedProduct.id, name: selectedProduct.name, price: itemPrice }],
           subtotal: itemPrice,
           shippingFee: shippingFee,
@@ -271,16 +541,15 @@
           createdAt: serverTimestamp()
         });
       } catch (err) {
-        console.error("Could not save order record:", err);
+        console.error("Order opslaan mislukt:", err);
       }
 
-      // 2. Open Tikkie link
       const tikkieUrl = selectedProduct.tikkieUrl;
       modal.classList.remove('active');
       window.open(tikkieUrl, '_blank');
     });
 
-    // Filter Buttons
+    // Category Filtering
     document.getElementById('category-filters').addEventListener('click', (e) => {
       if (!e.target.classList.contains('filter-btn')) return;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -289,8 +558,6 @@
       const category = e.target.dataset.category;
       renderProducts(category === 'all' ? products : products.filter(p => p.category === category));
     });
-
-    initApp();
   </script>
 </body>
 </html>
