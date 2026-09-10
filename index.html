@@ -203,6 +203,20 @@
     }
 
     .cart-footer { border-top: 1px solid #ddd; padding-top: 1rem; }
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+    .summary-line.total {
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-top: 0.5rem;
+      border-top: 1px dashed #ccc;
+      padding-top: 0.5rem;
+    }
+
     .checkout-btn {
       width: 100%;
       background: var(--primary);
@@ -253,9 +267,17 @@
       <p style="text-align: center; color: #888; margin-top: 2rem;">Your cart is empty.</p>
     </div>
     <div class="cart-footer">
-      <div style="display: flex; justify-content: space-between; font-weight: bold;">
+      <div class="summary-line">
+        <span>Items Subtotal:</span>
+        <span id="cart-subtotal">€0.00</span>
+      </div>
+      <div class="summary-line">
+        <span>Shipping (€1.00/item):</span>
+        <span id="cart-shipping">€0.00</span>
+      </div>
+      <div class="summary-line total">
         <span>Total:</span>
-        <span id="cart-total">$0.00</span>
+        <span id="cart-total">€0.00</span>
       </div>
       <button class="checkout-btn" id="checkout-btn">Checkout Now</button>
     </div>
@@ -265,7 +287,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Your exact Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyAzp1WSzwYCfANWxJLqJFexHa173hs5Z2Y",
       authDomain: "kitacat-snackfast.firebaseapp.com",
@@ -278,12 +299,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    // Reduced all prices by €1.00
     const products = [
-      { id: 1, name: "Nacho Cheese Chips", category: "chips", price: 2.99, icon: "🧀" },
-      { id: 3, name: "Gummy Bears", category: "sweets", price: 1.99, icon: "🐻" },
-      { id: 5, name: "Fizzy Cola Soda", category: "drinks", price: 1.79, icon: "🥤" },
-      { id: 6, name: "Energy Drink", category: "drinks", price: 3.99, icon: "⚡" },
-      { id: 7, name: "Salted Pretzels", category: "chips", price: 2.29, icon: "🥨" }
+      { id: 1, name: "Nacho Cheese Chips", category: "chips", price: 1.99, icon: "🧀" },
+      { id: 3, name: "Gummy Bears", category: "sweets", price: 0.99, icon: "🐻" },
+      { id: 5, name: "Fizzy Cola Soda", category: "drinks", price: 0.79, icon: "🥤" },
+      { id: 6, name: "Energy Drink", category: "drinks", price: 2.99, icon: "⚡" },
+      { id: 7, name: "Salted Pretzels", category: "chips", price: 1.29, icon: "🥨" }
     ];
 
     let cart = [];
@@ -295,7 +317,7 @@
           <div class="card-img">${p.icon}</div>
           <div class="card-body">
             <div class="card-title">${p.name}</div>
-            <div class="card-price">$${p.price.toFixed(2)}</div>
+            <div class="card-price">€${p.price.toFixed(2)}</div>
             <button class="add-btn" data-id="${p.id}">Add to Cart</button>
           </div>
         </div>
@@ -321,13 +343,18 @@
         cartItemsContainer.innerHTML = cart.map(item => `
           <div class="cart-item">
             <span>${item.icon} ${item.name}</span>
-            <strong>$${item.price.toFixed(2)}</strong>
+            <strong>€${item.price.toFixed(2)}</strong>
           </div>
         `).join('');
       }
 
-      const total = cart.reduce((sum, item) => sum + item.price, 0);
-      document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+      const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+      const shipping = cart.length * 1.00; // €1.00 shipping cost per item
+      const total = subtotal + shipping;
+
+      document.getElementById('cart-subtotal').innerText = `€${subtotal.toFixed(2)}`;
+      document.getElementById('cart-shipping').innerText = `€${shipping.toFixed(2)}`;
+      document.getElementById('cart-total').innerText = `€${total.toFixed(2)}`;
     }
 
     // Category Filter Handler
@@ -352,10 +379,16 @@
         return;
       }
 
+      const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+      const shipping = cart.length * 1.00;
+      const total = subtotal + shipping;
+
       try {
         const docRef = await addDoc(collection(db, "orders"), {
           items: cart,
-          total: cart.reduce((sum, item) => sum + item.price, 0),
+          subtotal: subtotal,
+          shippingFee: shipping,
+          total: total,
           createdAt: serverTimestamp()
         });
         alert("Order placed successfully! Firestore ID: " + docRef.id);
