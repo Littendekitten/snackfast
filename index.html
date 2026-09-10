@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SnackFast | Lightning Fast Snack Delivery</title>
+  <title>SnackFast | Lightning Delivery</title>
   <style>
     :root {
       --primary: #ff4757;
@@ -13,222 +13,56 @@
       --white: #ffffff;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--light); color: var(--dark); }
 
-    body {
-      background-color: var(--light);
-      color: var(--dark);
-    }
+    header { background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+    .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; }
+    .logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-decoration: none; }
+    .logo span { color: var(--accent); }
 
-    header {
-      background-color: var(--white);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
+    .cart-btn { background: var(--primary); color: var(--white); border: none; padding: 0.6rem 1.2rem; border-radius: 20px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+    .cart-badge { background: var(--accent); color: var(--dark); border-radius: 50%; padding: 2px 7px; font-size: 0.8rem; }
 
-    .nav-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-    }
-
-    .logo {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--primary);
-      text-decoration: none;
-    }
-
-    .logo span {
-      color: var(--accent);
-    }
-
-    .cart-btn {
-      background-color: var(--primary);
-      color: var(--white);
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .cart-badge {
-      background-color: var(--accent);
-      color: var(--dark);
-      border-radius: 50%;
-      padding: 2px 7px;
-      font-size: 0.8rem;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 2rem;
-    }
-
-    .hero {
-      background: linear-gradient(135deg, var(--primary), var(--accent));
-      color: var(--white);
-      padding: 3rem 2rem;
-      border-radius: 12px;
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-
+    .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+    .hero { background: linear-gradient(135deg, var(--primary), var(--accent)); color: var(--white); padding: 3rem 2rem; border-radius: 12px; text-align: center; margin-bottom: 2rem; }
     .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
     .hero p { font-size: 1.1rem; opacity: 0.9; }
 
-    .categories {
-      display: flex;
-      gap: 1rem;
-      margin-bottom: 2rem;
-      overflow-x: auto;
-    }
+    .categories { display: flex; gap: 1rem; margin-bottom: 2rem; overflow-x: auto; }
+    .filter-btn { background: var(--white); border: 1px solid #ddd; padding: 0.5rem 1.5rem; border-radius: 20px; cursor: pointer; font-weight: 600; }
+    .filter-btn.active { background: var(--dark); color: var(--white); border-color: var(--dark); }
 
-    .filter-btn {
-      background: var(--white);
-      border: 1px solid #ddd;
-      padding: 0.5rem 1.5rem;
-      border-radius: 20px;
-      cursor: pointer;
-      font-weight: 600;
-    }
+    .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+    .card { background: var(--white); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
 
-    .filter-btn.active {
-      background: var(--dark);
-      color: var(--white);
-      border-color: var(--dark);
-    }
+    /* PNG/JPG Product Image Styles */
+    .card-img { height: 180px; background: #fafafa; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .card-img img { width: 100%; height: 100%; object-fit: cover; }
 
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.5rem;
-    }
-
-    .card {
-      background: var(--white);
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .card-img {
-      height: 160px;
-      background: #e0e0e0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 4rem;
-    }
-
-    .card-body {
-      padding: 1rem;
-      display: flex;
-      flex-direction: column;
-      flex-grow: 1;
-    }
-
+    .card-body { padding: 1rem; display: flex; flex-direction: column; flex-grow: 1; }
     .card-title { font-size: 1.1rem; margin-bottom: 0.5rem; }
     .card-price { font-weight: bold; color: var(--primary); font-size: 1.2rem; margin-bottom: 1rem; }
 
-    .add-btn {
-      margin-top: auto;
-      background: var(--light);
-      border: 1px solid var(--dark);
-      color: var(--dark);
-      padding: 0.5rem;
-      border-radius: 4px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-    }
+    .add-btn { margin-top: auto; background: var(--light); border: 1px solid var(--dark); color: var(--dark); padding: 0.5rem; border-radius: 4px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .add-btn:hover { background: var(--dark); color: var(--white); }
 
-    .add-btn:hover {
-      background: var(--dark);
-      color: var(--white);
-    }
-
-    .cart-sidebar {
-      position: fixed;
-      top: 0;
-      right: -400px;
-      width: 350px;
-      height: 100%;
-      background: var(--white);
-      box-shadow: -2px 0 10px rgba(0,0,0,0.1);
-      transition: right 0.3s ease;
-      z-index: 200;
-      padding: 1.5rem;
-      display: flex;
-      flex-direction: column;
-    }
-
+    .cart-sidebar { position: fixed; top: 0; right: -400px; width: 360px; height: 100%; background: var(--white); box-shadow: -2px 0 10px rgba(0,0,0,0.1); transition: right 0.3s ease; z-index: 200; padding: 1.5rem; display: flex; flex-direction: column; }
     .cart-sidebar.open { right: 0; }
-
-    .cart-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #ddd;
-      padding-bottom: 1rem;
-    }
-
+    .cart-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding-bottom: 1rem; }
     .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; }
 
     .cart-items { flex-grow: 1; overflow-y: auto; margin: 1rem 0; }
-    
-    .cart-item {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 1rem;
-      border-bottom: 1px solid var(--light);
-      padding-bottom: 0.5rem;
-    }
+    .cart-item { display: flex; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid var(--light); padding-bottom: 0.5rem; align-items: center; gap: 10px; }
+    .cart-item-img { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; }
+    .cart-item-info { display: flex; flex-direction: column; flex-grow: 1; }
+    .tikkie-link { color: #0088cc; font-size: 0.8rem; text-decoration: underline; margin-top: 3px; }
 
     .cart-footer { border-top: 1px solid #ddd; padding-top: 1rem; }
-    .summary-line {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
-    }
-    .summary-line.total {
-      font-size: 1.1rem;
-      font-weight: bold;
-      margin-top: 0.5rem;
-      border-top: 1px dashed #ccc;
-      padding-top: 0.5rem;
-    }
+    .summary-line { display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.95rem; }
+    .summary-line.total { font-size: 1.1rem; font-weight: bold; margin-top: 0.5rem; border-top: 1px dashed #ccc; padding-top: 0.5rem; }
 
-    .checkout-btn {
-      width: 100%;
-      background: var(--primary);
-      color: var(--white);
-      border: none;
-      padding: 0.8rem;
-      font-size: 1rem;
-      font-weight: bold;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-top: 1rem;
-    }
+    .checkout-btn { width: 100%; background: var(--primary); color: var(--white); border: none; padding: 0.8rem; font-size: 1rem; font-weight: bold; border-radius: 4px; cursor: pointer; margin-top: 1rem; }
   </style>
 </head>
 <body>
@@ -245,7 +79,7 @@
   <div class="container">
     <section class="hero">
       <h1>Craving Solved in Minutes</h1>
-      <p>Your favorite chips, candy, and drinks delivered straight to your door.</p>
+      <p>Your favorite snacks delivered fast with Tikkie payment options.</p>
     </section>
 
     <div class="categories" id="category-filters">
@@ -261,11 +95,9 @@
   <div class="cart-sidebar" id="cart-sidebar">
     <div class="cart-header">
       <h2>Your Cart</h2>
-      <button class="close-btn" id="close-cart-btn">&times;</button>
+      <button id="close-cart-btn" class="close-btn">&times;</button>
     </div>
-    <div class="cart-items" id="cart-items">
-      <p style="text-align: center; color: #888; margin-top: 2rem;">Your cart is empty.</p>
-    </div>
+    <div class="cart-items" id="cart-items"></div>
     <div class="cart-footer">
       <div class="summary-line">
         <span>Items Subtotal:</span>
@@ -279,14 +111,22 @@
         <span>Total:</span>
         <span id="cart-total">€0.00</span>
       </div>
-      <button class="checkout-btn" id="checkout-btn">Checkout Now</button>
+      <button class="checkout-btn" id="checkout-btn">Submit Order & Pay via Tikkie</button>
     </div>
   </div>
 
+  <!-- Firebase Web SDK (Modular CDN Script) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { 
+      getFirestore, 
+      collection, 
+      getDocs, 
+      addDoc, 
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+    // Your exact Firebase project config
     const firebaseConfig = {
       apiKey: "AIzaSyAzp1WSzwYCfANWxJLqJFexHa173hs5Z2Y",
       authDomain: "kitacat-snackfast.firebaseapp.com",
@@ -299,25 +139,43 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Reduced all prices by €1.00
-    const products = [
-      { id: 1, name: "Nacho Cheese Chips", category: "chips", price: 1.99, icon: "🧀" },
-      { id: 3, name: "Gummy Bears", category: "sweets", price: 0.99, icon: "🐻" },
-      { id: 5, name: "Fizzy Cola Soda", category: "drinks", price: 0.79, icon: "🥤" },
-      { id: 6, name: "Energy Drink", category: "drinks", price: 2.99, icon: "⚡" },
-      { id: 7, name: "Salted Pretzels", category: "chips", price: 1.29, icon: "🥨" }
-    ];
-
+    let products = [];
     let cart = [];
+    const PLACEHOLDER_IMAGE = "https://via.placeholder.com/180?text=No+Image";
+
+    // Load products from Firestore database
+    async function initApp() {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = `<p style="text-align:center; width:100%;">Loading snacks from Firestore...</p>`;
+      
+      try {
+        const querySnapshot = await getDocs(collection(db, "products"));
+        products = [];
+        querySnapshot.forEach((doc) => {
+          products.push({ id: doc.id, ...doc.data() });
+        });
+        renderProducts(products);
+      } catch (err) {
+        console.error(err);
+        grid.innerHTML = `<p style="color:red; text-align:center; width:100%;">Failed to load snacks. Make sure Firestore rules are configured correctly!</p>`;
+      }
+    }
 
     function renderProducts(items) {
       const grid = document.getElementById('product-grid');
+      if (items.length === 0) {
+        grid.innerHTML = `<p style="text-align:center; width:100%;">No snacks found in Firestore collection 'products'.</p>`;
+        return;
+      }
+
       grid.innerHTML = items.map(p => `
         <div class="card">
-          <div class="card-img">${p.icon}</div>
+          <div class="card-img">
+            <img src="${p.imageUrl || PLACEHOLDER_IMAGE}" alt="${p.name}" onerror="this.src='${PLACEHOLDER_IMAGE}'" />
+          </div>
           <div class="card-body">
             <div class="card-title">${p.name}</div>
-            <div class="card-price">€${p.price.toFixed(2)}</div>
+            <div class="card-price">€${Number(p.price).toFixed(2)}</div>
             <button class="add-btn" data-id="${p.id}">Add to Cart</button>
           </div>
         </div>
@@ -325,7 +183,7 @@
 
       document.querySelectorAll('.add-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-          const id = parseInt(e.target.dataset.id);
+          const id = e.target.dataset.id;
           const product = products.find(p => p.id === id);
           cart.push(product);
           updateCartUI();
@@ -342,14 +200,18 @@
       } else {
         cartItemsContainer.innerHTML = cart.map(item => `
           <div class="cart-item">
-            <span>${item.icon} ${item.name}</span>
-            <strong>€${item.price.toFixed(2)}</strong>
+            <img class="cart-item-img" src="${item.imageUrl || PLACEHOLDER_IMAGE}" alt="${item.name}" onerror="this.src='${PLACEHOLDER_IMAGE}'" />
+            <div class="cart-item-info">
+              <span><strong>${item.name}</strong></span>
+              <small><a href="${item.tikkieUrl}" target="_blank" class="tikkie-link">Pay Tikkie Direct (incl. ship) 🔗</a></small>
+            </div>
+            <strong>€${Number(item.price).toFixed(2)}</strong>
           </div>
         `).join('');
       }
 
-      const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-      const shipping = cart.length * 1.00; // €1.00 shipping cost per item
+      const subtotal = cart.reduce((sum, item) => sum + Number(item.price), 0);
+      const shipping = cart.length * 1.00; // €1 per item
       const total = subtotal + shipping;
 
       document.getElementById('cart-subtotal').innerText = `€${subtotal.toFixed(2)}`;
@@ -357,7 +219,7 @@
       document.getElementById('cart-total').innerText = `€${total.toFixed(2)}`;
     }
 
-    // Category Filter Handler
+    // Filter Buttons
     document.getElementById('category-filters').addEventListener('click', (e) => {
       if (!e.target.classList.contains('filter-btn')) return;
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -372,14 +234,11 @@
     document.getElementById('open-cart-btn').addEventListener('click', () => sidebar.classList.add('open'));
     document.getElementById('close-cart-btn').addEventListener('click', () => sidebar.classList.remove('open'));
 
-    // Checkout button pushes order directly to Firebase Firestore
+    // Checkout Order logic
     document.getElementById('checkout-btn').addEventListener('click', async () => {
-      if (cart.length === 0) {
-        alert("Your cart is empty!");
-        return;
-      }
+      if (cart.length === 0) return alert("Your cart is empty!");
 
-      const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
+      const subtotal = cart.reduce((sum, item) => sum + Number(item.price), 0);
       const shipping = cart.length * 1.00;
       const total = subtotal + shipping;
 
@@ -391,17 +250,20 @@
           total: total,
           createdAt: serverTimestamp()
         });
-        alert("Order placed successfully! Firestore ID: " + docRef.id);
+        
+        let tikkieLinksText = cart.map(i => `• ${i.name}: ${i.tikkieUrl}`).join('\n');
+        alert(`Order Saved to Firestore! (ID: ${docRef.id})\n\nPlease pay using your Tikkie links:\n${tikkieLinksText}`);
+        
         cart = [];
         updateCartUI();
         sidebar.classList.remove('open');
       } catch (e) {
-        console.error("Error submitting order: ", e);
-        alert("Failed to submit order to Firebase. Make sure Firestore rules are set to test mode.");
+        console.error(e);
+        alert("Error submitting order! Make sure Firestore write rules allow creating documents in 'orders'.");
       }
     });
 
-    renderProducts(products);
+    initApp();
   </script>
 </body>
 </html>
