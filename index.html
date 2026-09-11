@@ -57,6 +57,19 @@
       </section>
 
       <h2 class="section-title" id="txt-products-title">Onze Producten</h2>
+
+      <!-- Zoekbalk & Categorie Filters -->
+      <div class="filter-bar" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 12px;">
+        <input type="text" id="search-input" placeholder="Zoek snacks, snoep, drinken..." style="padding: 0.8rem; border-radius: 8px; border: 1px solid #ccc; width: 100%; max-width: 400px; font-size: 1rem;" />
+        
+        <div class="category-buttons" style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-outline filter-btn active" data-category="all" id="btn-cat-all">Alles</button>
+          <button class="btn btn-outline filter-btn" data-category="sweets" id="btn-cat-sweets">Snoep</button>
+          <button class="btn btn-outline filter-btn" data-category="snacks" id="btn-cat-snacks">Snacks</button>
+          <button class="btn btn-outline filter-btn" data-category="drinks" id="btn-cat-drinks">Dranken</button>
+        </div>
+      </div>
+
       <div class="grid" id="product-grid">Laden...</div>
 
       <h2 class="section-title" id="txt-locations-title">Onze Locaties</h2>
@@ -71,6 +84,13 @@
       <p style="margin-top:0.5rem;"><span id="modal-item-name" style="font-weight:bold;"></span></p>
       <p><span id="txt-price-label">Prijs:</span> <span id="modal-item-price"></span> <span id="txt-shipping-info">(+ €1,00 verzendkosten)</span></p>
       <h3 style="margin-top:10px;"><span id="txt-total-label">Totaal:</span> <span id="modal-total-price"></span></h3>
+
+      <!-- Bezorglocatie Invoerveld -->
+      <div class="form-group" style="margin-top: 15px; text-align: left;">
+        <label id="txt-delivery-label" style="font-weight: bold; display: block; margin-bottom: 5px;">Bezorglocatie / Adres:</label>
+        <input type="text" id="delivery-address-input" placeholder="bijv. Lokaal 12, Kantine..." style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid #ccc; font-size:0.95rem;" />
+      </div>
+
       <div style="display:flex; gap:10px; margin-top:20px;">
         <button class="btn btn-outline" id="modal-cancel">Annuleren</button>
         <button class="btn btn-tikkie" id="modal-confirm">Betaal via Tikkie</button>
