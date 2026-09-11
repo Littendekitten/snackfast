@@ -38,27 +38,79 @@ let userProfile = null;
 let products = [];
 let selectedProduct = null;
 
-// Inlogstatus expliciet onthouden in de browser (Local Persistence)
+// Inlogstatus expliciet onthouden
 setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error("Fout bij instellen van persistence:", error);
 });
 
-// Vertalingen
+// ==========================================
+// 2. COMPLETE VERTALINGEN
+// ==========================================
 const translations = {
   nl: { 
     jobs: "Werken bij ons?", 
     logout: "Uitloggen", 
-    hero: "Snelle Bezorging" 
+    heroTitle: "Snelle Bezorging",
+    heroSub: "Selecteer een snack om direct via Tikkie te bestellen!",
+    productsTitle: "Onze Producten",
+    locationsTitle: "Onze Locaties",
+    orderBtn: "Bestellen",
+    addressLabel: "Adres",
+    statusLabel: "Status",
+    checkoutTitle: "Overzicht",
+    priceLabel: "Prijs:",
+    shippingInfo: "(+ €1,00 verzendkosten)",
+    totalLabel: "Totaal:",
+    cancelBtn: "Annuleren",
+    payTikkieBtn: "Betaal via Tikkie",
+    settingsTitle: "Instellingen",
+    themeLabel: "Thema:",
+    langLabel: "Taal / Language:",
+    closeBtn: "Sluiten",
+    saveBtn: "Opslaan",
+    welcome: "Welkom!",
+    chooseLang: "Kies je taal:",
+    usernameLabel: "Gebruikersnaam (max 12):",
+    startBtn: "Aan de slag",
+    loginSubtitle: "Log in met Google om verder te gaan",
+    noProducts: "Geen producten gevonden.",
+    noLocations: "Binnenkort openen we nieuwe locaties!",
+    loadError: "Kon gegevens niet laden."
   },
   en: { 
-    jobs: "Careers", 
+    jobs: "Work with us", 
     logout: "Logout", 
-    hero: "Instant Delivery" 
+    heroTitle: "Instant Delivery",
+    heroSub: "Select a snack to order directly via Tikkie!",
+    productsTitle: "Our Products",
+    locationsTitle: "Our Locations",
+    orderBtn: "Order Now",
+    addressLabel: "Address",
+    statusLabel: "Status",
+    checkoutTitle: "Order Overview",
+    priceLabel: "Price:",
+    shippingInfo: "(+ €1.00 delivery fee)",
+    totalLabel: "Total:",
+    cancelBtn: "Cancel",
+    payTikkieBtn: "Pay via Tikkie",
+    settingsTitle: "Settings",
+    themeLabel: "Theme:",
+    langLabel: "Language:",
+    closeBtn: "Close",
+    saveBtn: "Save",
+    welcome: "Welcome!",
+    chooseLang: "Choose language:",
+    usernameLabel: "Username (max 12):",
+    startBtn: "Get Started",
+    loginSubtitle: "Sign in with Google to continue",
+    noProducts: "No products found.",
+    noLocations: "New locations coming soon!",
+    loadError: "Could not load data."
   }
 };
 
 // ==========================================
-// 2. AUTHENTICATIE & SESSIE BEHEER
+// 3. AUTHENTICATIE & SESSIE BEHEER
 // ==========================================
 onAuthStateChanged(auth, async (user) => {
   if (user) {
@@ -72,11 +124,11 @@ onAuthStateChanged(auth, async (user) => {
         applyTheme(userProfile.theme);
         showApp();
       } else {
-        // Nieuwe gebruiker -> Toon onboarding
         document.getElementById('onboarding-screen')?.classList.remove('hidden');
+        applyTranslations('nl');
       }
     } catch (e) {
-      console.error("Fout bij ophalen gebruikersprofiel:", e);
+      console.error("Fout bij ophalen profiel:", e);
     }
   } else {
     currentUser = null;
@@ -84,11 +136,12 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById('login-screen')?.classList.remove('hidden');
     document.getElementById('app-container')?.classList.add('hidden');
     applyTheme('default');
+    applyTranslations('nl');
   }
 });
 
 // ==========================================
-// 3. HOOFD LOGICA & RENDEREN
+// 4. VERTAALLOGICA & RENDEREN
 // ==========================================
 function showApp() {
   document.getElementById('onboarding-screen')?.classList.add('hidden');
@@ -115,21 +168,45 @@ function applyTheme(theme) {
 
 function applyTranslations(lang) {
   const t = translations[lang] || translations.nl;
-  const jobsBtn = document.getElementById('nav-jobs-btn');
-  const logoutBtn = document.getElementById('logout-btn');
-  const heroTitle = document.getElementById('txt-hero-title');
+  
+  // Elementen koppelen aan hun vertaling
+  const setTxt = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.innerText = text;
+  };
 
-  if (jobsBtn) jobsBtn.innerText = t.jobs;
-  if (logoutBtn) logoutBtn.innerText = t.logout;
-  if (heroTitle) heroTitle.innerText = t.hero;
+  setTxt('nav-jobs-btn', t.jobs);
+  setTxt('logout-btn', t.logout);
+  setTxt('txt-hero-title', t.heroTitle);
+  setTxt('txt-hero-sub', t.heroSub);
+  setTxt('txt-products-title', t.productsTitle);
+  setTxt('txt-locations-title', t.locationsTitle);
+  setTxt('txt-checkout-title', t.checkoutTitle);
+  setTxt('txt-price-label', t.priceLabel);
+  setTxt('txt-shipping-info', t.shippingInfo);
+  setTxt('txt-total-label', t.totalLabel);
+  setTxt('modal-cancel', t.cancelBtn);
+  setTxt('modal-confirm', t.payTikkieBtn);
+  setTxt('txt-settings-title', t.settingsTitle);
+  setTxt('txt-theme-label', t.themeLabel);
+  setTxt('txt-lang-label', t.langLabel);
+  setTxt('close-settings-btn', t.closeBtn);
+  setTxt('save-settings-btn', t.saveBtn);
+  setTxt('txt-welcome', t.welcome);
+  setTxt('txt-choose-lang', t.chooseLang);
+  setTxt('txt-username-label', t.usernameLabel);
+  setTxt('save-profile-btn', t.startBtn);
+  setTxt('txt-login-subtitle', t.loginSubtitle);
 }
 
 // ==========================================
-// 4. DATA LADEN (PRODUCTEN & LOCATIES)
+// 5. DATA LADEN
 // ==========================================
 async function loadProducts() {
   const grid = document.getElementById('product-grid');
   if (!grid) return;
+  const lang = userProfile?.language || 'nl';
+  const t = translations[lang];
 
   try {
     const snap = await getDocs(collection(db, "products"));
@@ -137,7 +214,7 @@ async function loadProducts() {
     snap.forEach(d => products.push({ id: d.id, ...d.data() }));
 
     if (products.length === 0) {
-      grid.innerHTML = "<p>Geen producten gevonden.</p>";
+      grid.innerHTML = `<p>${t.noProducts}</p>`;
       return;
     }
     
@@ -147,14 +224,13 @@ async function loadProducts() {
           <img src="${p.imageUrl || ''}" alt="${p.name || 'Product'}" style="max-height:100%;" />
         </div>
         <div class="card-body">
-          <div class="card-title">${p.name || 'Naamloos product'}</div>
+          <div class="card-title">${p.name || 'Product'}</div>
           <div class="card-price">€${Number(p.price || 0).toFixed(2)}</div>
-          <button class="btn btn-primary buy-btn" data-id="${p.id}">Bestellen</button>
+          <button class="btn btn-primary buy-btn" data-id="${p.id}">${t.orderBtn}</button>
         </div>
       </div>
     `).join('');
 
-    // Klikken op bestellen
     document.querySelectorAll('.buy-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         const prodId = e.target.dataset.id;
@@ -171,62 +247,59 @@ async function loadProducts() {
       });
     });
   } catch (e) {
-    console.error("Fout bij laden producten:", e);
-    grid.innerHTML = "<p>Kon producten niet laden.</p>";
+    console.error("Fout bij producten:", e);
+    grid.innerHTML = `<p>${t.loadError}</p>`;
   }
 }
 
 async function loadLocations() {
   const grid = document.getElementById('locations-grid');
   if (!grid) return;
+  const lang = userProfile?.language || 'nl';
+  const t = translations[lang];
 
   try {
     const snap = await getDocs(collection(db, "locations"));
     if (snap.empty) { 
-      grid.innerHTML = "<p>Binnenkort openen we nieuwe locaties!</p>"; 
+      grid.innerHTML = `<p>${t.noLocations}</p>`; 
       return; 
     }
     
     let html = "";
     snap.forEach(d => {
       const loc = d.data();
-      const addressText = loc.address || loc.adress || "Adres onbekend";
+      const addressText = loc.address || loc.adress || "Onbekend";
       const statusText = loc.status ? String(loc.status).toLowerCase() : "";
       const isOpen = statusText === 'open';
 
       html += `
         <div class="card" style="padding:1.5rem; background: var(--white);">
           <h3 style="color:var(--primary); margin-bottom:0.5rem;">${loc.name || 'Locatie'}</h3>
-          <p><strong>Adres:</strong> ${addressText}</p>
+          <p><strong>${t.addressLabel}:</strong> ${addressText}</p>
           <p style="margin-top:10px; font-weight:bold; color: ${isOpen ? 'green' : 'orange'};">
-            Status: ${loc.status || 'Onbekend'}
+            ${t.statusLabel}: ${loc.status || 'Onbekend'}
           </p>
         </div>
       `;
     });
     grid.innerHTML = html;
   } catch(e) {
-    console.error("Firestore Error (Locaties):", e);
-    grid.innerHTML = "<p>Kon locaties niet laden.</p>";
+    console.error("Fout bij locaties:", e);
+    grid.innerHTML = `<p>${t.loadError}</p>`;
   }
 }
 
 // ==========================================
-// 5. EVENT LISTENERS & MODALS
+// 6. EVENT LISTENERS & MODALS
 // ==========================================
-
-// In- & Uitloggen Event Listeners
 document.getElementById('google-login-btn')?.addEventListener('click', () => {
-  signInWithPopup(auth, new GoogleAuthProvider()).catch(err => {
-    console.error("Inlogfout:", err);
-  });
+  signInWithPopup(auth, new GoogleAuthProvider());
 });
 
 document.getElementById('logout-btn')?.addEventListener('click', () => {
   signOut(auth);
 });
 
-// Onboarding Form opslaan
 document.getElementById('save-profile-btn')?.addEventListener('click', async () => {
   const usernameInput = document.getElementById('username-input')?.value.trim();
   const languageInput = document.getElementById('language-select')?.value || 'nl';
@@ -242,38 +315,27 @@ document.getElementById('save-profile-btn')?.addEventListener('click', async () 
     theme: 'default'
   };
 
-  try {
-    await setDoc(doc(db, "users", currentUser.uid), userProfile);
-    showApp();
-  } catch (e) {
-    console.error("Fout bij opslaan profiel:", e);
-  }
+  await setDoc(doc(db, "users", currentUser.uid), userProfile);
+  showApp();
 });
 
-// Checkout Modal
 document.getElementById('modal-cancel')?.addEventListener('click', () => {
   document.getElementById('checkout-modal')?.classList.remove('active');
 });
 
 document.getElementById('modal-confirm')?.addEventListener('click', async () => {
   if (!selectedProduct) return;
+  const total = Number(selectedProduct.price || 0) + 1.00;
   
-  const price = Number(selectedProduct.price || 0);
-  const total = price + 1.00;
-  
-  try {
-    fetch(FORMSPREE_URL, {
-      method: "POST", 
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        subject: `Bestelling: ${userProfile?.username || 'Anoniem'}`, 
-        Product: selectedProduct.name, 
-        Totaal: `€${total.toFixed(2)}` 
-      })
-    });
-  } catch (e) {
-    console.error("Fout bij versturen bestelnotificatie:", e);
-  }
+  fetch(FORMSPREE_URL, {
+    method: "POST", 
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ 
+      subject: `Bestelling: ${userProfile?.username || 'Anoniem'}`, 
+      Product: selectedProduct.name, 
+      Totaal: `€${total.toFixed(2)}` 
+    })
+  });
 
   document.getElementById('checkout-modal')?.classList.remove('active');
   if (selectedProduct.tikkieUrl) {
@@ -281,14 +343,12 @@ document.getElementById('modal-confirm')?.addEventListener('click', async () => 
   }
 });
 
-// Instellingen Modal
 const settingsModal = document.getElementById('settings-modal');
 
 document.getElementById('open-settings-btn')?.addEventListener('click', () => {
   if (userProfile) {
     const themeSelect = document.getElementById('theme-select');
     const langSelect = document.getElementById('settings-language-select');
-    
     if (themeSelect) themeSelect.value = userProfile.theme || 'default';
     if (langSelect) langSelect.value = userProfile.language || 'nl';
   }
@@ -309,13 +369,13 @@ document.getElementById('save-settings-btn')?.addEventListener('click', async ()
 
   applyTheme(newTheme);
   applyTranslations(newLang);
+  
+  // Reload cards so product & location buttons reflect the new language immediately
+  loadProducts();
+  loadLocations();
 
   if (currentUser) {
-    try {
-      await setDoc(doc(db, "users", currentUser.uid), userProfile, { merge: true });
-    } catch (e) {
-      console.error("Fout bij opslaan instellingen:", e);
-    }
+    await setDoc(doc(db, "users", currentUser.uid), userProfile, { merge: true });
   }
 
   settingsModal?.classList.remove('active');
