@@ -37,8 +37,9 @@ let currentUser = null;
 let userProfile = null;
 let products = [];
 let selectedProduct = null;
+let activeCategory = 'all';
+let searchQuery = '';
 
-// Inlogstatus expliciet onthouden
 setPersistence(auth, browserLocalPersistence).catch((error) => {
   console.error("Fout bij instellen van persistence:", error);
 });
@@ -74,8 +75,17 @@ const translations = {
     startBtn: "Aan de slag",
     loginSubtitle: "Log in met Google om verder te gaan",
     noProducts: "Geen producten gevonden.",
+    noProductsFilter: "Geen producten gevonden voor deze zoekopdracht.",
     noLocations: "Binnenkort openen we nieuwe locaties!",
-    loadError: "Kon gegevens niet laden."
+    loadError: "Kon gegevens niet laden.",
+    searchPlaceholder: "Zoek snacks, snoep, drinken...",
+    catAll: "Alles",
+    catSweets: "Snoep",
+    catSnacks: "Snacks",
+    catDrinks: "Dranken",
+    deliveryLabel: "Bezorglocatie / Adres:",
+    deliveryPlaceholder: "bijv. Lokaal 12, Kantine, of Adres...",
+    deliveryRequired: "Vul een bezorglocatie in voordat je kunt betalen!"
   },
   en: { 
     jobs: "Work with us", 
@@ -104,8 +114,17 @@ const translations = {
     startBtn: "Get Started",
     loginSubtitle: "Sign in with Google to continue",
     noProducts: "No products found.",
+    noProductsFilter: "No products matched your search.",
     noLocations: "New locations coming soon!",
-    loadError: "Could not load data."
+    loadError: "Could not load data.",
+    searchPlaceholder: "Search snacks, sweets, drinks...",
+    catAll: "All",
+    catSweets: "Sweets",
+    catSnacks: "Snacks",
+    catDrinks: "Drinks",
+    deliveryLabel: "Delivery Location / Address:",
+    deliveryPlaceholder: "e.g. Room 12, Cafeteria, or Address...",
+    deliveryRequired: "Please enter a delivery location before paying!"
   }
 };
 
@@ -168,8 +187,6 @@ function applyTheme(theme) {
 
 function applyTranslations(lang) {
   const t = translations[lang] || translations.nl;
-  
-  // Elementen koppelen aan hun vertaling
   const setTxt = (id, text) => {
     const el = document.getElementById(id);
     if (el) el.innerText = text;
@@ -197,16 +214,96 @@ function applyTranslations(lang) {
   setTxt('txt-username-label', t.usernameLabel);
   setTxt('save-profile-btn', t.startBtn);
   setTxt('txt-login-subtitle', t.loginSubtitle);
+  setTxt('txt-delivery-label', t.deliveryLabel);
+
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.placeholder = t.searchPlaceholder;
+
+  const deliveryInput = document.getElementById('delivery-address-input');
+  if (deliveryInput) deliveryInput.placeholder = t.deliveryPlaceholder;
+
+  setTxt('btn-cat-all', t.catAll);
+  setTxt('btn-cat-sweets', t.catSweets);
+  setTxt('btn-cat-snacks', t.catSnacks);
+  setTxt('btn-cat-drinks', t.catDrinks);
 }
 
 // ==========================================
-// 5. DATA LADEN
+// 5. PRODUCTEN FILTEREN & RENDEREN
 // ==========================================
+function renderProducts() {
+  const grid = document.getElementById('product-grid');
+  if (!grid) return;
+  const lang = userProfile?.language || 'nl';
+  const t = translations[lang] || translations.nl;
+
+  const filtered = products.filter(p => {
+    // Veilige fallback (voorkomt vastlopen) & ondersteuning voor Nederlandse en Engelse veldnamen in Firebase
+    const prodName = p.name || p.naam || '';
+    const nameMatch = prodName.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const prodCat = (p.category || p.categorie || '').toLowerCase();
+    
+    // Zorg dat Nederlandse categorienamen uit Firebase matchen met de Engelse knopwaarden (sweets, snacks, drinks)
+    let mappedCat = prodCat;
+    if (prodCat === 'snoep') mappedCat = 'sweets';
+    if (prodCat === 'dranken' || prodCat === 'drinken') mappedCat = 'drinks';
+
+    const catMatch = activeCategory === 'all' || mappedCat === activeCategory;
+    
+    return nameMatch && catMatch;
+  });
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `<p>${t.noProductsFilter}</p>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p => {
+    const prodName = p.name || p.naam || 'Product';
+    return `
+      <div class="card">
+        <div class="card-img">
+          <img src="${p.imageUrl || ''}" alt="${prodName}" style="max-height:100%;" />
+        </div>
+        <div class="card-body">
+          <div class="card-title">${prodName}</div>
+          <div class="card-price">€${Number(p.price || 0).toFixed(2)}</div>
+          <button class="btn btn-primary buy-btn" data-id="${p.id}">${t.orderBtn}</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.querySelectorAll('.buy-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const prodId = e.target.dataset.id;
+      selectedProduct = products.find(p => p.id === prodId);
+      if (selectedProduct) {
+        const prodName = selectedProduct.name || selectedProduct.naam || 'Product';
+        const price = Number(selectedProduct.price || 0);
+        const total = price + 1.00;
+        
+        document.getElementById('modal-item-name').innerText = prodName;
+        document.getElementById('modal-item-price').innerText = `€${price.toFixed(2)}`;
+        document.getElementById('modal-total-price').innerText = `€${total.toFixed(2)}`;
+        
+        const deliveryInput = document.getElementById('delivery-address-input');
+        if (deliveryInput) {
+          deliveryInput.value = userProfile?.deliveryAddress || '';
+        }
+
+        document.getElementById('checkout-modal')?.classList.add('active');
+      }
+    });
+  });
+}
+
 async function loadProducts() {
   const grid = document.getElementById('product-grid');
   if (!grid) return;
   const lang = userProfile?.language || 'nl';
-  const t = translations[lang];
+  const t = translations[lang] || translations.nl;
 
   try {
     const snap = await getDocs(collection(db, "products"));
@@ -217,35 +314,8 @@ async function loadProducts() {
       grid.innerHTML = `<p>${t.noProducts}</p>`;
       return;
     }
-    
-    grid.innerHTML = products.map(p => `
-      <div class="card">
-        <div class="card-img">
-          <img src="${p.imageUrl || ''}" alt="${p.name || 'Product'}" style="max-height:100%;" />
-        </div>
-        <div class="card-body">
-          <div class="card-title">${p.name || 'Product'}</div>
-          <div class="card-price">€${Number(p.price || 0).toFixed(2)}</div>
-          <button class="btn btn-primary buy-btn" data-id="${p.id}">${t.orderBtn}</button>
-        </div>
-      </div>
-    `).join('');
 
-    document.querySelectorAll('.buy-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        const prodId = e.target.dataset.id;
-        selectedProduct = products.find(p => p.id === prodId);
-        if (selectedProduct) {
-          const price = Number(selectedProduct.price || 0);
-          const total = price + 1.00;
-          
-          document.getElementById('modal-item-name').innerText = selectedProduct.name || '';
-          document.getElementById('modal-item-price').innerText = `€${price.toFixed(2)}`;
-          document.getElementById('modal-total-price').innerText = `€${total.toFixed(2)}`;
-          document.getElementById('checkout-modal')?.classList.add('active');
-        }
-      });
-    });
+    renderProducts();
   } catch (e) {
     console.error("Fout bij producten:", e);
     grid.innerHTML = `<p>${t.loadError}</p>`;
@@ -256,7 +326,7 @@ async function loadLocations() {
   const grid = document.getElementById('locations-grid');
   if (!grid) return;
   const lang = userProfile?.language || 'nl';
-  const t = translations[lang];
+  const t = translations[lang] || translations.nl;
 
   try {
     const snap = await getDocs(collection(db, "locations"));
@@ -292,6 +362,23 @@ async function loadLocations() {
 // ==========================================
 // 6. EVENT LISTENERS & MODALS
 // ==========================================
+
+// Zoekbalk Listener
+document.getElementById('search-input')?.addEventListener('input', (e) => {
+  searchQuery = e.target.value.trim();
+  renderProducts();
+});
+
+// Categorie Filter Buttons Listeners
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    e.target.classList.add('active');
+    activeCategory = e.target.dataset.category;
+    renderProducts();
+  });
+});
+
 document.getElementById('google-login-btn')?.addEventListener('click', () => {
   signInWithPopup(auth, new GoogleAuthProvider());
 });
@@ -323,16 +410,42 @@ document.getElementById('modal-cancel')?.addEventListener('click', () => {
   document.getElementById('checkout-modal')?.classList.remove('active');
 });
 
+// Betalen via Tikkie Knop
 document.getElementById('modal-confirm')?.addEventListener('click', async () => {
   if (!selectedProduct) return;
+
+  const deliveryInput = document.getElementById('delivery-address-input');
+  const deliveryAddress = deliveryInput ? deliveryInput.value.trim() : '';
+  const lang = userProfile?.language || 'nl';
+  const t = translations[lang] || translations.nl;
+
+  if (!deliveryAddress) {
+    alert(t.deliveryRequired);
+    deliveryInput?.focus();
+    return;
+  }
+
+  // Onthoud de bezorglocatie in het profiel & Firebase
+  if (!userProfile) userProfile = {};
+  userProfile.deliveryAddress = deliveryAddress;
+
+  if (currentUser) {
+    await setDoc(doc(db, "users", currentUser.uid), { deliveryAddress: deliveryAddress }, { merge: true });
+  }
+
+  const prodName = selectedProduct.name || selectedProduct.naam || 'Product';
   const total = Number(selectedProduct.price || 0) + 1.00;
+  const username = userProfile?.username || 'Anoniem';
   
+  // EXTRA DUIDELIJK VOOR FORMSPREE: Locatie zit nu in het onderwerp én de body!
   fetch(FORMSPREE_URL, {
     method: "POST", 
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ 
-      subject: `Bestelling: ${userProfile?.username || 'Anoniem'}`, 
-      Product: selectedProduct.name, 
+      _subject: `📦 BESTELLING VOOR: ${deliveryAddress} (Klant: ${username})`, 
+      "Adres / Bezorglocatie": deliveryAddress,
+      Klant: username,
+      Product: prodName, 
       Totaal: `€${total.toFixed(2)}` 
     })
   });
@@ -370,8 +483,7 @@ document.getElementById('save-settings-btn')?.addEventListener('click', async ()
   applyTheme(newTheme);
   applyTranslations(newLang);
   
-  // Reload cards so product & location buttons reflect the new language immediately
-  loadProducts();
+  renderProducts();
   loadLocations();
 
   if (currentUser) {
