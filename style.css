@@ -1,73 +1,308 @@
-/* Color Themes & Variables */
+/* =========================================
+   1. ROOT VARIABLES & THEMES
+   ========================================= */
 :root {
-  --primary: #ff4757; --accent: #ffa502; --dark: #2f3542;
-  --light: #f1f2f6; --white: #ffffff; --card-bg: #ffffff;
-  --text-color: #2f3542; --tikkie-blue: #0088cc;
+  --primary: #ff5722;
+  --primary-hover: #e64a19;
+  --tikkie: #00d66c;
+  --tikkie-hover: #00b359;
+  --bg-color: #f8f9fa;
+  --text-color: #333;
+  --card-bg: #ffffff;
+  --border-color: #e0e0e0;
 }
-body.dark-mode {
-  --primary: #ff6b81; --accent: #eccc68; --dark: #f1f2f6;
-  --light: #1e272e; --white: #2d3436; --card-bg: #353b48;
-  --text-color: #f1f2f6;
-}
-body.kitacat-mode {
-  --primary: #ff793f; --accent: #ffb142; --dark: #331800;
-  --light: #fff5eb; --white: #ffeaa7; --card-bg: #ffffff;
-  --text-color: #2d1400;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-body { background-color: var(--light); color: var(--text-color); transition: 0.3s; }
 
-/* Overlays & Modals */
-.modal-overlay, .auth-overlay {
-  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center;
-  z-index: 1000; opacity: 0; pointer-events: none; transition: 0.2s;
+/* Dark Mode */
+.dark-mode {
+  --primary: #ff7043;
+  --bg-color: #121212;
+  --text-color: #ffffff;
+  --card-bg: #1e1e1e;
+  --border-color: #333;
 }
-.auth-overlay { background: var(--light); z-index: 2000; opacity: 1; pointer-events: auto; }
-.modal-overlay.active, .auth-overlay:not(.hidden) { opacity: 1; pointer-events: auto; }
-.modal-content, .auth-card {
-  background: var(--white); padding: 2rem; border-radius: 12px; max-width: 450px; width: 90%;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1); max-height: 90vh; overflow-y: auto; text-align: center;
+
+/* KitaCat Special Theme */
+.kitacat-mode {
+  --primary: #e91e63;
+  --bg-color: #fce4ec;
+  --text-color: #880e4f;
+  --card-bg: #ffffff;
+  --border-color: #f8bbd0;
 }
-.modal-content { text-align: left; }
+
+/* =========================================
+   2. BASIC RESET & SETUP
+   ========================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+}
+
 .hidden { display: none !important; }
+.font-bold { font-weight: bold; }
+.text-sm { font-size: 0.85rem; color: gray; }
 
-/* Forms & Buttons */
-.form-group { text-align: left; margin-bottom: 1.2rem; }
-.form-group label { display: block; font-weight: bold; margin-bottom: 0.4rem; }
-.form-group input, .form-group select, .form-group textarea {
-  width: 100%; padding: 0.7rem; border: 1px solid #ccc; border-radius: 6px;
-  background: var(--white); color: var(--text-color);
+/* =========================================
+   3. TYPOGRAPHY & HEADER
+   ========================================= */
+header {
+  background-color: var(--card-bg);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid var(--border-color);
 }
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap; /* Voorkomt overlap op kleine schermen */
+  gap: 10px;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-color);
+  text-decoration: none;
+}
+.logo span { color: var(--primary); }
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hero {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  border-radius: 12px;
+  margin: 1.5rem 0;
+}
+
+.hero h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+.hero p { font-size: 1rem; opacity: 0.9; }
+
+.section-title {
+  margin: 2rem 0 1rem;
+  font-size: 1.5rem;
+  border-bottom: 2px solid var(--primary);
+  display: inline-block;
+  padding-bottom: 0.2rem;
+}
+
+/* =========================================
+   4. LAYOUT & GRIDS
+   ========================================= */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem 3rem 1rem;
+}
+
+/* De Filter / Zoek Balk */
+.filter-bar {
+  display: flex;
+  flex-direction: column; /* Mobiel: onder elkaar */
+  gap: 15px;
+  margin-bottom: 1.5rem;
+  background: var(--card-bg);
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.search-input, .input-full {
+  padding: 0.8rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  width: 100%;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* Categorie Knoppen ALTIJD netjes naast elkaar */
+.category-buttons {
+  display: flex;
+  flex-wrap: wrap; /* Zorgt dat ze naar volgende regel gaan als het niet past */
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+/* Grid Systeem Mobiel First */
+.grid {
+  display: grid;
+  gap: 1rem;
+}
+
+/* Mobiel: Producten in 2 kleine kolommen naast elkaar, Locaties in 1 */
+#product-grid { grid-template-columns: repeat(2, 1fr); }
+#locations-grid { grid-template-columns: 1fr; }
+
+/* =========================================
+   5. BUTTONS & CARDS
+   ========================================= */
 .btn {
-  width: 100%; padding: 0.8rem; border-radius: 6px; font-weight: bold;
-  border: none; cursor: pointer; text-align: center;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
 }
-.btn-primary { background: var(--primary); color: #fff; }
-.btn-outline { background: transparent; border: 1px solid var(--text-color); color: var(--text-color); }
-.btn-tikkie { background: var(--tikkie-blue); color: #fff; }
-.google-btn { background: #fff; color: #333; border: 1px solid #ccc; display: flex; justify-content: center; gap: 10px; }
 
-/* Header & Layout */
-header { background: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-.nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; }
-.logo { font-size: 1.8rem; font-weight: 800; color: var(--primary); text-decoration: none; }
-.logo span { color: var(--accent); }
-.nav-actions { display: flex; gap: 10px; align-items: center; }
+.btn-small { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+.btn-icon { padding: 0.4rem; font-size: 1.2rem; background: transparent; color: var(--text-color); }
 
-.container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
-.hero { background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff; padding: 3rem 2rem; border-radius: 12px; text-align: center; margin-bottom: 2rem; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-/* Grids (Products & Locations) */
-.section-title { margin-bottom: 1rem; border-bottom: 2px solid var(--primary); display: inline-block; padding-bottom: 0.5rem; }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
-.card { background: var(--card-bg); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); display: flex; flex-direction: column; }
-.card-img { height: 180px; background: #fafafa; display: flex; align-items: center; justify-content: center; }
-.card-img img { width: 100%; height: 100%; object-fit: cover; }
-.card-body { padding: 1rem; display: flex; flex-direction: column; flex-grow: 1; }
-.card-title { font-size: 1.1rem; margin-bottom: 0.5rem; font-weight: bold; }
-.card-price { color: var(--primary); font-size: 1.3rem; margin-bottom: 1rem; font-weight: bold; }
+.btn-outline {
+  background: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+}
+.btn-outline:hover, .filter-btn.active {
+  background: var(--primary);
+  color: white;
+}
 
-/* Professional Jobs Page Specific */
-.job-header { text-align: center; padding: 4rem 2rem; background: var(--white); margin-bottom: 2rem; }
-.job-form-container { max-width: 600px; margin: 0 auto; background: var(--white); padding: 2rem; border-radius: 8px; }
+.btn-tikkie { background: var(--tikkie); color: white; }
+.btn-tikkie:hover { background: var(--tikkie-hover); transform: translateY(-1px); }
+
+.google-btn {
+  background: white;
+  color: #444;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s;
+  border: 1px solid var(--border-color);
+}
+.card:hover { transform: translateY(-3px); }
+
+.card-img {
+  width: 100%;
+  height: 140px; /* Mooie hoogte voor mobiel */
+  background: var(--bg-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+.card-img img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.card-body {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.card-title { font-weight: bold; margin-bottom: 0.5rem; font-size: 1rem; }
+.card-price { color: var(--primary); font-weight: bold; font-size: 1.1rem; margin-bottom: 1rem; }
+.buy-btn { margin-top: auto; width: 100%; }
+
+/* =========================================
+   6. MODALS & FORMS
+   ========================================= */
+.modal-overlay, .auth-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+.modal-overlay:not(.active) { display: none; }
+
+.modal-content, .auth-card {
+  background: var(--card-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.auth-card { text-align: center; }
+.auth-card h2 { margin-bottom: 0.5rem; color: var(--primary); }
+
+.form-group { margin-bottom: 1rem; text-align: left; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+
+.modal-spacing { margin-top: 0.5rem; margin-bottom: 0.5rem; }
+.modal-total { margin-top: 15px; border-top: 1px solid var(--border-color); padding-top: 10px; }
+.checkout-form { margin-top: 20px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 25px; flex-wrap: wrap; }
+.modal-actions .btn { flex: 1; }
+
+/* =========================================
+   7. MEDIA QUERIES (TABLET & DESKTOP)
+   ========================================= */
+
+/* Tablet (iPad etc.) */
+@media (min-width: 768px) {
+  /* Filterbalk naast elkaar zetten */
+  .filter-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .search-input { width: 350px; }
+  
+  /* Meer kolommen voor producten en locaties */
+  #product-grid { grid-template-columns: repeat(3, 1fr); }
+  #locations-grid { grid-template-columns: repeat(2, 1fr); }
+  
+  .card-img { height: 180px; } /* Grotere foto's */
+}
+
+/* Desktop (Laptops & Grote schermen) */
+@media (min-width: 1024px) {
+  #product-grid { grid-template-columns: repeat(4, 1fr); }
+  #locations-grid { grid-template-columns: repeat(3, 1fr); }
+  
+  .hero h1 { font-size: 3rem; }
+}
+
+/* Kleine Mobiele Schermen Verberg-trucjes */
+@media (max-width: 480px) {
+  .desktop-only { display: none; } /* Verbergt gebruikersnaam op héél kleine schermen zodat knoppen passen */
+  .nav-container { justify-content: center; }
+}
