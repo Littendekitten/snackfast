@@ -2,7 +2,8 @@
 <html lang="nl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Deze regel is cruciaal voor mobiele scaling! -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SnackFast | Snelle Bezorging</title>
   <link rel="stylesheet" href="style.css">
 </head>
@@ -42,10 +43,10 @@
       <div class="nav-container">
         <a href="/" class="logo">Snack<span>Fast</span></a>
         <div class="nav-actions">
-          <a href="/jobs" class="btn btn-primary" id="nav-jobs-btn" style="text-decoration:none; padding:0.4rem 0.8rem; font-size:0.9rem;">Werken bij ons?</a>
-          <span id="display-username" style="font-weight:bold; margin-left:10px;"></span>
-          <button class="btn btn-outline" style="padding:0.4rem; border:none; font-size:1.2rem; cursor:pointer;" id="open-settings-btn">⚙️</button>
-          <button class="btn btn-outline" style="padding:0.4rem; font-size:0.8rem;" id="logout-btn">Uitloggen</button>
+          <a href="/jobs" class="btn btn-primary" id="nav-jobs-btn">Werken?</a>
+          <span id="display-username" class="desktop-only"></span>
+          <button class="btn btn-icon" id="open-settings-btn">⚙️</button>
+          <button class="btn btn-outline btn-small" id="logout-btn">Uitloggen</button>
         </div>
       </div>
     </header>
@@ -58,11 +59,11 @@
 
       <h2 class="section-title" id="txt-products-title">Onze Producten</h2>
 
-      <!-- Zoekbalk & Categorie Filters -->
-      <div class="filter-bar" style="margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 12px;">
-        <input type="text" id="search-input" placeholder="Zoek snacks, snoep, drinken..." style="padding: 0.8rem; border-radius: 8px; border: 1px solid #ccc; width: 100%; max-width: 400px; font-size: 1rem;" />
+      <!-- Responsive Zoekbalk & Filters -->
+      <div class="filter-bar">
+        <input type="text" id="search-input" class="search-input" placeholder="Zoek snacks, snoep, drinken..." />
         
-        <div class="category-buttons" style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <div class="category-buttons">
           <button class="btn btn-outline filter-btn active" data-category="all" id="btn-cat-all">Alles</button>
           <button class="btn btn-outline filter-btn" data-category="sweets" id="btn-cat-sweets">Snoep</button>
           <button class="btn btn-outline filter-btn" data-category="snacks" id="btn-cat-snacks">Snacks</button>
@@ -81,17 +82,17 @@
   <div class="modal-overlay" id="checkout-modal">
     <div class="modal-content">
       <h3 id="txt-checkout-title">Overzicht</h3>
-      <p style="margin-top:0.5rem;"><span id="modal-item-name" style="font-weight:bold;"></span></p>
-      <p><span id="txt-price-label">Prijs:</span> <span id="modal-item-price"></span> <span id="txt-shipping-info">(+ €1,00 verzendkosten)</span></p>
-      <h3 style="margin-top:10px;"><span id="txt-total-label">Totaal:</span> <span id="modal-total-price"></span></h3>
+      <p class="modal-spacing"><span id="modal-item-name" class="font-bold"></span></p>
+      <p><span id="txt-price-label">Prijs:</span> <span id="modal-item-price"></span> <span id="txt-shipping-info" class="text-sm">(+ €1,00 bezorging)</span></p>
+      <h3 class="modal-total"><span id="txt-total-label">Totaal:</span> <span id="modal-total-price"></span></h3>
 
       <!-- Bezorglocatie Invoerveld -->
-      <div class="form-group" style="margin-top: 15px; text-align: left;">
-        <label id="txt-delivery-label" style="font-weight: bold; display: block; margin-bottom: 5px;">Bezorglocatie / Adres:</label>
-        <input type="text" id="delivery-address-input" placeholder="bijv. Lokaal 12, Kantine..." style="width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid #ccc; font-size:0.95rem;" />
+      <div class="form-group checkout-form">
+        <label id="txt-delivery-label">Bezorglocatie / Adres:</label>
+        <input type="text" id="delivery-address-input" class="input-full" placeholder="bijv. Lokaal 12, Kantine..." />
       </div>
 
-      <div style="display:flex; gap:10px; margin-top:20px;">
+      <div class="modal-actions">
         <button class="btn btn-outline" id="modal-cancel">Annuleren</button>
         <button class="btn btn-tikkie" id="modal-confirm">Betaal via Tikkie</button>
       </div>
@@ -101,11 +102,11 @@
   <!-- Settings Modal -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-content">
-      <h3 style="margin-bottom: 1rem;" id="txt-settings-title">Instellingen</h3>
+      <h3 id="txt-settings-title" class="modal-title">Instellingen</h3>
       
       <div class="form-group">
         <label id="txt-theme-label">Thema:</label>
-        <select id="theme-select">
+        <select id="theme-select" class="input-full">
           <option value="default">Standaard</option>
           <option value="dark">Dark Mode</option>
           <option value="kitacat">KitaCat Special</option>
@@ -114,13 +115,13 @@
 
       <div class="form-group">
         <label id="txt-lang-label">Taal / Language:</label>
-        <select id="settings-language-select">
+        <select id="settings-language-select" class="input-full">
           <option value="nl">Nederlands</option>
           <option value="en">English</option>
         </select>
       </div>
 
-      <div style="display:flex; gap:10px; margin-top:20px;">
+      <div class="modal-actions">
         <button class="btn btn-outline" id="close-settings-btn">Sluiten</button>
         <button class="btn btn-primary" id="save-settings-btn">Opslaan</button>
       </div>
