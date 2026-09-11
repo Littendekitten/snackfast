@@ -12,7 +12,7 @@
   <div class="auth-overlay hidden" id="login-screen">
     <div class="auth-card">
       <h2>SnackFast</h2>
-      <p>Log in met Google om verder te gaan</p>
+      <p id="txt-login-subtitle">Log in met Google om verder te gaan</p>
       <button class="btn google-btn" id="google-login-btn">Inloggen met Google</button>
     </div>
   </div>
@@ -20,16 +20,16 @@
   <!-- Onboarding Screen -->
   <div class="auth-overlay hidden" id="onboarding-screen">
     <div class="auth-card">
-      <h2>Welkom!</h2>
+      <h2 id="txt-welcome">Welkom!</h2>
       <div class="form-group">
-        <label>Kies je taal:</label>
+        <label id="txt-choose-lang">Kies je taal:</label>
         <select id="language-select">
           <option value="nl">Nederlands</option>
           <option value="en">English</option>
         </select>
       </div>
       <div class="form-group">
-        <label>Gebruikersnaam (max 12):</label>
+        <label id="txt-username-label">Gebruikersnaam (max 12):</label>
         <input type="text" id="username-input" maxlength="12" placeholder="Jouw naam" />
       </div>
       <button class="btn btn-primary" id="save-profile-btn">Aan de slag</button>
@@ -53,13 +53,13 @@
     <div class="container">
       <section class="hero">
         <h1 id="txt-hero-title">Snelle Bezorging</h1>
-        <p>Selecteer een snack om direct via Tikkie te bestellen!</p>
+        <p id="txt-hero-sub">Selecteer een snack om direct via Tikkie te bestellen!</p>
       </section>
 
-      <h2 class="section-title">Onze Producten</h2>
+      <h2 class="section-title" id="txt-products-title">Onze Producten</h2>
       <div class="grid" id="product-grid">Laden...</div>
 
-      <h2 class="section-title">Onze Locaties</h2>
+      <h2 class="section-title" id="txt-locations-title">Onze Locaties</h2>
       <div class="grid" id="locations-grid">Laden...</div>
     </div>
   </div>
@@ -67,9 +67,10 @@
   <!-- Checkout Modal -->
   <div class="modal-overlay" id="checkout-modal">
     <div class="modal-content">
-      <h3 id="modal-item-name">Overzicht</h3>
-      <p>Prijs: <span id="modal-item-price"></span> (+ €1,00 verzendkosten)</p>
-      <h3 style="margin-top:10px;">Totaal: <span id="modal-total-price"></span></h3>
+      <h3 id="txt-checkout-title">Overzicht</h3>
+      <p style="margin-top:0.5rem;"><span id="modal-item-name" style="font-weight:bold;"></span></p>
+      <p><span id="txt-price-label">Prijs:</span> <span id="modal-item-price"></span> <span id="txt-shipping-info">(+ €1,00 verzendkosten)</span></p>
+      <h3 style="margin-top:10px;"><span id="txt-total-label">Totaal:</span> <span id="modal-total-price"></span></h3>
       <div style="display:flex; gap:10px; margin-top:20px;">
         <button class="btn btn-outline" id="modal-cancel">Annuleren</button>
         <button class="btn btn-tikkie" id="modal-confirm">Betaal via Tikkie</button>
@@ -80,10 +81,10 @@
   <!-- Settings Modal -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-content">
-      <h3 style="margin-bottom: 1rem;">Instellingen</h3>
+      <h3 style="margin-bottom: 1rem;" id="txt-settings-title">Instellingen</h3>
       
       <div class="form-group">
-        <label>Thema:</label>
+        <label id="txt-theme-label">Thema:</label>
         <select id="theme-select">
           <option value="default">Standaard</option>
           <option value="dark">Dark Mode</option>
@@ -92,7 +93,7 @@
       </div>
 
       <div class="form-group">
-        <label>Taal / Language:</label>
+        <label id="txt-lang-label">Taal / Language:</label>
         <select id="settings-language-select">
           <option value="nl">Nederlands</option>
           <option value="en">English</option>
